@@ -1,0 +1,153 @@
+@import url('font-inter.css');
+:root {
+  --primarycolor: #0A76D8;
+  --primarycolorhover: #006dd3;
+  --btnice: #D8EBFA;
+  --btnnicetext: #1b62b3;
+
+  /* New colors */
+  --black: #000000;
+  --orange: #FF5733; /* You can choose any shade of orange that suits your design */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    border-spacing: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+/*------custom-scroll-bar - from w3schools.com------------------*/
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 12px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.input-text {
+    border-radius: 4px;
+    border: 1px solid rgb(226, 226, 226);
+    padding: 10px;
+    width: 92%;
+    transition: 0.2s;
+    outline: none;
+    color: var(--black); /* Use black for text color */
+}
+
+.input-text:hover {
+    background-color: rgb(250, 250, 250);
+    transition: 0.2s;
+    outline: none;
+}
+
+.input-text:focus {
+    border: 1px solid var(--primarycolor);
+    transition: 0.2s;
+}
+
+.input-text::placeholder {
+    font-family: 'Inter', sans-serif;
+    color: var(--black); /* Placeholder color */
+}
+
+/* -----------Buttons---------------*/
+.btn {
+    cursor: pointer;
+    padding: 8px 20px;
+    outline: none;
+    text-decoration: none;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+    border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn:hover {
+    background-color: var(--primarycolorhover);
+    box-shadow: none;
+    transition: all 0.5s;
+}
+
+.btn-primary {
+    background-color: var(--primarycolor);
+    border: 1px solid var(--primarycolor);
+    color: #fff;
+    box-shadow: 0 3px 5px 0 rgba(57,108,240,0.3);
+}
+
+.btn-primary-soft {
+    background-color: #D8EBFA;
+    color: #1969AA;
+    font-weight: 500;
+    font-size: 16px;
+    border: none;
+}
+
+.btn-primary-soft:hover {
+    background-color: var(--primarycolor);
+    color: #fff;
+    box-shadow: 0 3px 5px 0 rgba(57,108,240,0.3);
+}
+
+/* New button style using orange */
+.btn-orange {
+    background-color: var(--orange);
+    color: #fff;
+}
+
+.btn-orange:hover {
+    background-color: var(--black);
+}
+
+/* Other button styles can be similarly adjusted if necessary */
+.btn-primary-gray {
+    background-color: #fff;
+    border: 2px solid #c9cbce9f;
+    color: #212529d0;
+}
+
+.btn-primary-gray:hover {
+    background-color: var(--orange); /* Using orange for hover effect */
+}
+
+/* Menu styles */
+.menu-active {
+    color: var(--primarycolor);
+    border-right: 7px solid var(--primarycolor);
+    background-color: var(--orange); /* Active menu item background */
+}
+
+.menu-btn:hover {
+    background-color: var(--btnice);
+    color: var(--orange); /* Hover color for menu items */
+}
+
+/* Update dashboard items to use new colors */
+.dashboard-items {
+    border: 2px solid #c9cbce9f;
+    border-radius: 7px;
+    color: var(--black); /* Text color in dashboard */
+    background-color: var(--btnice); /* Use existing light blue */
+}
+
+/* Example for using the black color in other elements */
+.h1-dashboard {
+    color: var(--black); /* Header color */
+}
+
+/* Add black and orange to various other elements as needed */
+
+/* The rest of your CSS remains unchanged... */

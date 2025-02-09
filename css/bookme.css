@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Anton&family=Cookie&family=Poppins:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400&display=swap');
+
+:root {
+    --bg-text-shadow: 0 2px 4px rgba(255, 255, 255, 0.2), 0 3px 6px rgba(255, 255, 255, 0.2), 0 8px 16px rgba(255, 255, 255, 0.2);
+    --bg-box-shadow: 0px 0px 20px 6px rgba(0, 0, 0, 0.5);
+    --black: #ffffff;
+    --dark-gray: #1f1f1f; /* Dark gray for UI elements */
+    --orange: #f18a03; /* Main orange color */
+    --light-orange: rgba(233, 215, 195, 0.5); /* Light orange for backgrounds */
+    --light-yellow: rgba(255, 252, 47, 1); /* Light yellow for buttons */
+    --hover-orange: rgba(255, 153, 51, 0.8); /* Orange for hover effects */
+    --primary-font: 'Poppins', sans-serif;
+}
+
+*::-webkit-scrollbar {
+    width: .4rem;
+}
+*::-webkit-scrollbar-track {
+    background: var(--dark-gray);
+}
+*::-webkit-scrollbar-thumb {
+    background: var(--orange); /* Use orange for scrollbar thumb */
+}
+
+body {
+    background-color: var(--black);
+    font-family: var(--primary-font);
+    color: #f0f0f0; /* Light text color */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+i {
+    font-size: 20px;
+}
+
+.searchsection {
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: var(--dark-gray); /* Dark gray background */
+    position: fixed;
+    z-index: 500;
+    box-shadow: var(--bg-box-shadow);
+    transition: background-color 0.3s ease; /* Add smooth transition */
+}
+
+.searchsection:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
+}
+
+#search_bar {
+    height: 40px;
+    width: 80%;
+    border: none;
+    background-color: var(--light-orange);
+    padding-left: 20px;
+    border-radius: 20px;
+    outline: none;
+    transition: background-color 0.3s ease; /* Add smooth transition */
+}
+
+#search_bar:focus {
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly lighter when focused */
+}
+
+#adduser {
+    height: 40px;
+    background-color: var(--orange);
+    border: none;
+    border-radius: 20px;
+    padding: 0 50px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform for button */
+}
+
+#adduser:hover {
+    background-color: var(--hover-orange);
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.exportexcel {
+    height: 40px;
+    width: 40px;
+    background-color: var(--light-yellow);
+    border: none;
+    border-radius: 50%;
+}
+
+/* guest panel */
+
+#guestdetailpanel {
+    position: fixed;
+    z-index: 1000;
+    height: 100%;
+    width: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center; /* Center items vertically */
+    background-color: rgba(255, 123, 0, 0.9); /* Dark transparent background */
+    backdrop-filter: blur(5px); /* Add blur effect */
+}
+
+#guestdetailpanel .guestdetailpanelform {
+    height: 620px;
+    width: 90%; /* Make it responsive */
+    max-width: 1170px;
+    background-color: var(--black);
+    border-radius: 15px;  
+    position: relative;
+    animation: guestinfoform .3s ease;
+    box-shadow: var(--bg-box-shadow);
+}
+
+a {
+    color: var(--orange);
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease; /* Smooth transition for links */
+}
+
+a:hover {
+    color: rgba(255, 215, 0, 1); /* Change link color on hover */
+}
+
+@keyframes guestinfoform {
+    0% {
+        transform: translateY(50px);
+    }
+    100% {
+        transform: translateY(0); /* Animate to original position */
+    }
+}
+
+.guestdetailpanelform .head {
+    padding: 0 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(255, 153, 0, 0.8); /* Header background */
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.guestdetailpanelform .head h3 {
+    color: #fffdfd;
+    margin-top: 10px;
+    font-family: 'Abril Fatface', cursive; /* Unique font for headings */
+    display: flex;
+    left: 500px;
+}
+
+.guestdetailpanelform .head i {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.guestdetailpanelform .middle {
+    width: 100%;
+    height: 500px;
+    margin: 10px 0 0 0;
+    display: flex;
+}
+
+.guestdetailpanelform .middle .guestinfo,
+.guestdetailpanelform .middle .reservationinfo {
+    width: 100%;
+    background-color: rgb(255, 153, 0);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    transition: background-color 0.3s ease; /* Add transition for hover */
+}
+
+.guestdetailpanelform .middle .guestinfo:hover,
+.guestdetailpanelform .middle .reservationinfo:hover {
+    background-color: rgba(255, 153, 0, 0.8); /* Darker on hover */
+}
+
+.line {
+    width: 10px;
+    height: 100%;
+}
+
+.guestdetailpanelform .footer {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+
+.middle input,
+.selectinput {
+    width: 100%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.middle input:focus,
+.selectinput:focus {
+    background-color: rgba(255, 255, 255, 1); /* Fully opaque when focused */
+    outline: none;
+}
+
+.datesection {
+    display: flex;
+}
+
+.datesection span {
+    margin: 5px;
+}
+
+/* room book table */
+.roombooktable {
+    position: absolute;
+    color: #eaeaea;
+    margin-top: 80px;
+    width: 100%;
+    height: 100vh;
+    padding-bottom: 900px;
+}
+
+.roombooktable thead {
+    background-color: var(--dark-gray);
+    color: white;
+    text-align: center;
+}
+
+.roombooktable tbody {
+    text-align: center;
+}
+
+.action a {
+    text-decoration: none;
+}
+
+.action button {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 5px;
+    background-color: var(--orange);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform for button */
+}
+
+.action button:hover {
+    background-color: var(--hover-orange);
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
