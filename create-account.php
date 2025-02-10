@@ -16,83 +16,9 @@
     </style>
 </head>
 <body>
-<?php
 
-//learn from w3schools.com
-//Unset all the server side variables
-
-session_start();
-
-$_SESSION["user"]="";
-$_SESSION["usertype"]="";
-
-// Set the new timezone
-date_default_timezone_set('Asia/Kolkata');
-$date = date('Y-m-d');
-
-$_SESSION["date"]=$date;
-
-
-//import database
-include("connection.php");
-
-
-
-
-
-if($_POST){
-
-    $result= $conn->query("select * from webuser");
-
-    $fname=$_SESSION['personal']['fname'];
-    $lname=$_SESSION['personal']['lname'];
-    $name=$fname." ".$lname;
-    $address=$_SESSION['personal']['address'];
-    $dob=$_SESSION['personal']['dob'];
-    $email=$_POST['newemail'];
-    $tele=$_POST['tele'];
-    $newpassword=$_POST['newpassword'];
-    $cpassword=$_POST['cpassword'];
-    
-    if ($newpassword==$cpassword){
-        $sqlmain= "select * from webuser where email=?;";
-        $stmt = $conn->prepare($sqlmain);
-        $stmt->bind_param("s",$email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if($result->num_rows==1){
-            echo "<script>alert('Email already used.')</script>";
-        }else{
-            //TODO
-            $conn->query("insert into user(pemail,pname,ppassword, paddress,pdob,ptel) values('$email','$name','$newpassword','$address','$dob','$tele');");
-            $conn->query("insert into webuser values('$email','p')");
-
-            //print_r("insert into user values($pid,'$email','$fname','$lname','$newpassword','$address','$nic','$dob','$tele');");
-            $_SESSION["user"]=$email;
-            $_SESSION["usertype"]="p";
-            $_SESSION["username"]=$fname;
-
-            header('Location: login.php');
-        }
-        
-    }else{
-        $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Confirmation Error! Reconform Password</label>';
-    }
-
-
-
-    
-}else{
-    //header('location: signup.php');
-    $error='<label for="promter" class="form-label"></label>';
-}
-
-?>
-
-
-    <center>
     <div class="container">
-        <table border="0" style="width: 69%;">
+        <table  style="width: 69%;">
             <tr>
                 <td colspan="2">
                     <p class="header-text">Let's Get Started</p>
@@ -177,6 +103,6 @@ if($_POST){
         </table>
 
     </div>
-</center>
+
 </body>
 </html>

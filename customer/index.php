@@ -5,8 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="images/Icon2.png" type="image/gif" sizes="16x16">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="../img/icon2.png" type="image/gif" sizes="16x16">
+    <link rel="stylesheet" href="../css/style.css">
     <title> Sky High Motorcycle</title>
 </head>
 
@@ -37,8 +37,8 @@
                 </a>
                 <span>|</span>
                 <a href="">
-                        Register
-                    </a>
+                    Register
+                </a>
             </div>
             <div id="user">
                 <a href="login.php">
@@ -48,17 +48,17 @@
         </div>
         <div>
             <a href="">
-                <img src="img/icon2.png" alt="">
+                <img src="../img/icon2.png" alt="">
             </a>
         </div>
     </nav>
     <main>
         <div id="banner">
-            <img name="slide" class="slide" src="img/banner1.jpg" alt="">
-            <img name="slide" class="slide" src="img/banner2.jpg" alt="">
-            <img name="slide" class="slide" src="img/banner3.jpg" alt="">
+            <img name="slide" class="slide" src="../img/banner1.jpg" alt="">
+            <img name="slide" class="slide" src="../img/banner2.jpg" alt="">
+            <img name="slide" class="slide" src="../img/banner3.jpg" alt="">
             <div>
-                <img src="img/icon2.png" alt="">
+                <img style="height: 200px;" src="../img/icon2.png" alt="">
             </div>
             <div>
                 <a href="login.php"><span>Book Now!</span></a>
@@ -87,10 +87,13 @@
         </div>
         <div id="content">
             <div id="video" class="container">
-                <iframe width="1280" height="720" src="https://www.youtube.com/watch?v=LQ7YHzYuVWw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe width="1280" height="720" src="https://www.youtube.com/embed/LQ7YHzYuVWw" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
             </div>
             <div id="announcement" class="container">
-                <div>   
+                <div>
                     <a href="announcement-board.html">
                         <span>NEWS & ANNOUNCEMENTS</span>
                     </a>
@@ -135,7 +138,7 @@
                 <div>
                     <div>
                         <a href="services.php">
-                            <img src="images/trophy.png" alt="trophy">
+                            <img src="../img/trophy.png" alt="trophy">
                             <div>
                                 <p>SERVICES</p>
                                 <span>We make sure to deliver the best service we can offer.</span>
@@ -144,11 +147,11 @@
                     </div>
                     <div>
                         <a href="parts.php">
-                            <img src="svg/donation.svg" alt="trophy">
+                            <img src="../svg/donation.svg" alt="trophy">
                             <div>
                                 <p>PARTS</p>
                                 <span>Parts that are available in our shops.</span>
-                            </div>  
+                            </div>
                         </a>
                     </div>
                 </div>
@@ -163,9 +166,8 @@
             </div>
         </div>
     </footer>
-    <script src="javascript/scrollspy.js"></script>
+    <!-- <script src="javascript/scrollspy.js"></script>
     <script src="javascript/Collapse-Navigation.js"></script>
     <script src="javascript/Profile.js"></script>
-    <script src="javascript/Banner-Slide.js"></script>
+    <script src="javascript/Banner-Slide.js"></script> -->
 </body>
-
