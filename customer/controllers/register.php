@@ -9,9 +9,7 @@ if (isset($_POST["submit"])) {
     $birthday = $_POST["birthday"];
     $contact = $_POST["contact"];
     $role = "customer";
-    var_dump($_POST["user_pass"]);  // Add this to register.php
-    // exit();
-    
+
     require_once './functions.php';
     require_once '../../admin_panel/controller/dbCon.php';
 
