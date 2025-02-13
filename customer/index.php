@@ -1,7 +1,18 @@
 <?php
 include_once './includes/header.php';
+$username = isset($_SESSION["username"]) ? $_SESSION["username"] : null;
+$name = isset($_SESSION["name"]) ? $_SESSION["name"] : null;
+$contact = isset($_SESSION["contact"]) ? $_SESSION["contact"] : null;
+$role = isset($_SESSION["role"]) ? $_SESSION["role"] : null;
+$address = isset($_SESSION["address"]) ? $_SESSION["address"] : null;
+
 ?>
 <style>
+    .input {
+        width: 100%;
+        color: white;
+    }
+
     .modal {
         z-index: 100 !important;
     }
@@ -35,34 +46,37 @@ include_once './includes/header.php';
                 onclick="document.getElementById('appointmentModal').classList.remove('is-active')"></button>
         </header>
         <section class="modal-card-body has-background-primary">
-            <form action="" method="POST">
-                <div class="columns">
+            <form action="./controllers/setAppointment.php" method="POST">
+                <div class="columns dashed">
                     <div class="column">
                         <h5 class="title is-5">Client Information</h5>
                         <div class="field">
                             <label class="label">Name</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="Enter name">
+                                <input type="text" name="name" value="<?php echo $name; ?>" class="input" placeholder="Enter name">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Email</label>
                             <div class="control">
-                                <input type="email" class="input" placeholder="Enter email">
+                                <input type="email" name="username" value="<?php echo $username; ?>" class="input"
+                                    placeholder="Enter email">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Address</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="Enter address">
+                                <input type="text" name="address" value="<?php echo $address; ?>" class="input"
+                                    placeholder="Enter address">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Phone Number</label>
                             <div class="control">
-                                <input type="number"
+                                <input name="contact" type="number"
                                     oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                    type="number" maxlength="11" class="input" placeholder="09xxxxxxxxx">
+                                    type="number" value="<?php echo $contact; ?>" maxlength="11" class="input"
+                                    placeholder="09xxxxxxxxx">
                             </div>
                         </div>
                     </div>
@@ -71,25 +85,25 @@ include_once './includes/header.php';
                         <div class="field">
                             <label class="label">Type of Vehicle</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="Enter vehicle type">
+                                <input type="text" name="vehicle" class="input" placeholder="Enter vehicle type">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Select Service</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="Enter service">
+                                <input type="text" name="service" class="input" placeholder="Enter service">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Select Time</label>
                             <div class="control">
-                                <input type="time" min="10:00" max="20:00" class="input">
+                                <input type="time" name="time" class="input" min="10:00" max="20:00">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Date</label>
                             <div class="control">
-                                <input type="date" class="input">
+                                <input type="date" name="date" class="input" min="<?php echo $today; ?>">
                             </div>
                         </div>
                     </div>

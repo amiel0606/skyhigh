@@ -1,3 +1,8 @@
+<?php
+session_start();
+date_default_timezone_set('Asia/Manila');
+$today = date(format: 'Y-m-d');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,6 +21,22 @@
 
 <body>
     <style>
+        input[type="time"]::-webkit-calendar-picker-indicator,
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            background-color: transparent;
+        }
+
+        input[type="time"]::-moz-calendar-picker-indicator,
+        input[type="date"]::-moz-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        input[type="time"]::-ms-clear,
+        input[type="date"]::-ms-clear {
+            filter: invert(1);
+        }
+
         :root {
             --bulma-primary-h: 210deg;
             --bulma-primary-s: 30%;
@@ -150,8 +171,8 @@
             outline: none;
             color: #FFC300;
         }
-        
-        .columns {
+
+        .dashed {
             border-style: dashed;
         }
     </style>
@@ -168,18 +189,22 @@
                 </div>
             </a>
             <div class="d-flex ms-auto">
-                <button class="bbtn btn-outline-light me-2" type="button"
-                    onclick="document.getElementById('registerModal').classList.add('is-active')">Sign Up</button>
-                <button class="bbtn btn-light" type="button"
+                <button class="bbtn btn-outline-light me-2 <?php echo isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>"
+                    type="button" onclick="document.getElementById('registerModal').classList.add('is-active')">Sign
+                    Up</button>
+                <button class="bbtn btn-light <?php echo isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>" type="button"
                     onclick="document.getElementById('loginModal').classList.add('is-active')">Log In</button>
+                <button class="bbtn btn-outline-light me-2 <?php echo isset($_SESSION['uID']) ? '' : 'is-hidden'; ?>"
+                    type="button" onclick="window.location.href = './controllers/logout.php'">Log out</button>
             </div>
+
         </div>
     </nav>
     <nav class="navbar navbar-expand-lg bg-secondary">
         <div class="container-fluid">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Parts</a>
+                    <a class="nav-link" href="./parts.php">Parts</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Inquire</a>
@@ -213,19 +238,19 @@
                             onclick="document.getElementById('registerModal').classList.remove('is-active')"></button>
                     </header>
                     <section class="modal-card-body has-background-primary">
-                        <form action="" method="POST">
-                            <div class="columns">
+                        <form action="./controllers/register.php" method="POST">
+                            <div class="columns dashed">
                                 <div class="column">
                                     <div class="field">
                                         <label class="label">Name</label>
                                         <div class="control">
-                                            <input type="text" class="input" placeholder="Enter name">
+                                            <input type="text" name="name" class="input" placeholder="Enter name">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <label class="label">Email</label>
                                         <div class="control">
-                                            <input type="email" class="input" placeholder="Enter email">
+                                            <input type="email" name="email" class="input" placeholder="Enter email">
                                         </div>
                                     </div>
                                     <p class="is-size-6">Click <button class="no-acc-btn">here </button> to Log in</p>
@@ -234,7 +259,7 @@
                                     <div class="field">
                                         <label class="label">Address</label>
                                         <div class="control">
-                                            <input type="text" class="input" placeholder="Enter address">
+                                            <input type="text" name="address" class="input" placeholder="Enter address">
                                         </div>
                                     </div>
                                     <div class="field">
@@ -242,19 +267,22 @@
                                         <div class="control">
                                             <input type="number"
                                                 oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                                type="number" maxlength="11" class="input" placeholder="09xxxxxxxxx">
+                                                type="number" name="contact" maxlength="11" class="input"
+                                                placeholder="09xxxxxxxxx">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <label class="label">Password</label>
                                         <div class="control">
-                                            <input type="password" class="input" placeholder="Enter Password">
+                                            <input type="password" name="password" class="input"
+                                                placeholder="Enter Password">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <label class="label">Confirm Password</label>
                                         <div class="control">
-                                            <input type="password" class="input" placeholder="Confirm your password">
+                                            <input type="password" name="confPassword" class="input"
+                                                placeholder="Confirm your password">
                                         </div>
                                     </div>
                                 </div>
@@ -277,21 +305,23 @@
                             onclick="document.getElementById('loginModal').classList.remove('is-active')"></button>
                     </header>
                     <section class="modal-card-body has-background-primary">
-                        <form action="" method="POST">
+                        <form action="./controllers/login.php" method="POST">
                             <div class="field">
                                 <label class="label">Email</label>
                                 <div class="control">
-                                    <input type="email" class="input" placeholder="Enter Email">
+                                    <input type="email" name="username" class="input" placeholder="Enter Email">
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">Password</label>
                                 <div class="control">
-                                    <input type="password" class="input" placeholder="Enter your password">
+                                    <input type="password" name="password" class="input"
+                                        placeholder="Enter your password">
                                 </div>
                             </div>
                             <div class="has-text-centered">
-                                <button type="submit" class="button button-submit is-warning">Login</button>
+                                <button type="submit" name="Login"
+                                    class="button button-submit is-warning">Login</button>
                             </div>
                         </form>
                     </section>

@@ -8,7 +8,7 @@ include_once './includes/header.php';
 </style>
 
 <p class="is-size-2 has-text-weight-bold">FAQs.</p>
-<div class="columns">
+<div class="columns dashed">
     <div class="column is-half">
         <p class="is-size-3 has-text-weight-semibold is-italic">Services</p>
         <ol class="is-size-5 has-text-weight-medium

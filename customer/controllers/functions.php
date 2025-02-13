@@ -1,20 +1,15 @@
 <?php
-function emptyInputSignup($Fname, $Lname, $address, $UserName, $password, $ConfPassword)
+function emptyInputSignup($name, $email, $address, $phone, $password, $confPassword)
 {
-    return empty($Fname) || empty($Lname) || empty($address) || empty($UserName) || empty($password) || empty($ConfPassword);
+    return empty($name) || empty($email) || empty($address) || empty($phone) || empty($password) || empty($confPassword);
 }
 
-function InvalidUser($UserName)
+function passMatch($password, $confPassword)
 {
-    return !preg_match("/^[a-zA-Z0-9]*$/", $UserName);
+    return $password !== $confPassword;
 }
 
-function passMatch($password, $ConfPassword)
-{
-    return $password !== $ConfPassword;
-}
-
-function userExist($conn, $UserName)
+function userExist($conn, $email)
 {
     $sql = "SELECT * FROM tbl_users WHERE username = ?";
     $stmt = mysqli_stmt_init($conn);
@@ -23,7 +18,7 @@ function userExist($conn, $UserName)
         exit();
     }
 
-    mysqli_stmt_bind_param($stmt, "s", $UserName);
+    mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
 
     $resultData = mysqli_stmt_get_result($stmt);
@@ -31,49 +26,45 @@ function userExist($conn, $UserName)
     if ($row = mysqli_fetch_assoc($resultData)) {
         return $row;
     } else {
-        $result = false;
-        return $result;
+        return false;
     }
-
 }
 
-function emptyInputLogin($uName, $pwd)
+function emptyInputLogin($email, $password)
 {
-    if (empty($uName) || empty($pwd)) {
-        $result = true;
-    } else {
-        $result = false;
-    }
-    return $result;
+    return empty($email) || empty($password);
 }
 
-function loginUser($conn, $uName, $pwd)
+function loginUser($conn, $email, $password)
 {
-    $UserExists = userExist($conn, $uName);
-
-    if ($UserExists == false) {
+    $userExists = userExist($conn, $email);
+    
+    if ($userExists == false) {
         header("location: ../index.php?error=WrongLogin");
         exit();
     }
 
-    $pwdHashed = $UserExists["password"];
-
-    if (!password_verify($pwd, $pwdHashed)) {
-        echo "Password verification failed!";
+    $pwdHashed = $userExists["password"];
+    if (!password_verify($password, $pwdHashed)) {
+        header("location: ../index.php?error=WrongPassword");
         exit();
     } else {
         session_start();
-        $_SESSION["uID"] = $UserExists["uID"];
-        $_SESSION["username"] = $UserExists["username"];
-        header("location: ../index.php");
+        $_SESSION["uID"] = $userExists["uID"];
+        $_SESSION["username"] = $userExists["username"];
+        $_SESSION["name"] = $userExists["name"];
+        $_SESSION["contact"] = $userExists["contact"];
+        $_SESSION["role"] = $userExists["role"];
+        $_SESSION["address"] = $userExists["address"];
+
+        header("location: ../index.php?error=none");
         exit();
     }
 }
 
-
-function createUser($conn, $UserName, $Lname, $Fname, $address, $contact, $birthday, $password)
+function createUser($conn, $name, $email, $address, $phone, $password)
 {
-    $sql = "INSERT INTO tbl_users (pass_normal, username, password, role, firstName, lastName, address, contact, birthday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    $sql = "INSERT INTO tbl_users (name, username, address, contact, password, role) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../index.php?error=stmtFailed");
@@ -83,10 +74,10 @@ function createUser($conn, $UserName, $Lname, $Fname, $address, $contact, $birth
     $hashedPass = password_hash($password, PASSWORD_DEFAULT);
     $role = "customer";
 
-    mysqli_stmt_bind_param($stmt, "sssssssss", $password, $UserName, $hashedPass, $role, $Fname, $Lname, $address, $contact, $birthday);
+    mysqli_stmt_bind_param($stmt, "ssssss", $name, $email, $address, $phone, $hashedPass, $role);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     
-    header("location: ../index.php?error=Success");
+    header("location: ../index.php?success=Registered");
     exit();
 }
