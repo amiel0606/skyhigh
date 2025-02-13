@@ -11,9 +11,19 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css">
+</head>
 
+<body>
     <style>
+        :root {
+            --bulma-primary-h: 210deg;
+            --bulma-primary-s: 30%;
+            --bulma-primary-l: 55%;
+            --bulma-warning-h: 46deg;
+            --bulma-warning-l: 50%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #262E36;
@@ -95,7 +105,7 @@
 
         .content {
             position: relative;
-            z-index: 1;
+            z-index: 100;
             color: white;
             padding: 20px;
             width: 700px;
@@ -106,7 +116,7 @@
             font-weight: 500;
         }
 
-        .button {
+        .bbtn {
             background-color: #FFC300;
             color: black;
             border: none;
@@ -118,23 +128,50 @@
             cursor: pointer;
             margin-left: 70;
         }
-    </style>
-</head>
 
-<body>
+        .modal {
+            z-index: 100 !important;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        .no-acc-btn {
+            background-color: transparent;
+            background-repeat: no-repeat;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            outline: none;
+            color: #FFC300;
+        }
+        
+        .columns {
+            border-style: dashed;
+        }
+    </style>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <div class="d-flex align-items-center">
-                <img src="../img/logo.png" alt="Logo" class="me-2 logo-img">
-                <div class="logo-container">
-                    <span class="logo-text logo-text-skyhigh">SKYHIGH</span>
-                    <span class="logo-text logo-text-motorcycle">MOTORCYCLE</span>
+            <a href="./index.php">
+                <div class="d-flex align-items-center">
+                    <img src="../img/logo.png" alt="Logo" class="me-2 logo-img">
+                    <div class="logo-container">
+                        <span class="logo-text logo-text-skyhigh">SKYHIGH</span>
+                        <span class="logo-text logo-text-motorcycle">MOTORCYCLE</span>
+                    </div>
+                    <span class="middle-text">Parts/Trading</span>
                 </div>
-                <span class="middle-text">Parts/Trading</span>
-            </div>
+            </a>
             <div class="d-flex ms-auto">
-                <button class="btn btn-outline-light me-2" type="button">Sign Up</button>
-                <button class="btn btn-light" type="button">Log In</button>
+                <button class="bbtn btn-outline-light me-2" type="button"
+                    onclick="document.getElementById('registerModal').classList.add('is-active')">Sign Up</button>
+                <button class="bbtn btn-light" type="button"
+                    onclick="document.getElementById('loginModal').classList.add('is-active')">Log In</button>
             </div>
         </div>
     </nav>
@@ -151,13 +188,112 @@
                     <a class="nav-link" href="#">Services</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="./about.php">About</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./faq.php">FAQs</a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="background-container">
         <div class="content">
+            <div id="registerModal" class="modal">
+                <div class="modal-background"
+                    onclick="document.getElementById('registerModal').classList.remove('is-active')">
+                </div>
+                <div class="modal-card">
+                    <header class="modal-card-head has-background-dark ">
+                        <p class="modal-card-title has-text-weight-bold has-text-white has-text-centered">Create an
+                            Account</p>
+                        <button class="delete" aria-label="close"
+                            onclick="document.getElementById('registerModal').classList.remove('is-active')"></button>
+                    </header>
+                    <section class="modal-card-body has-background-primary">
+                        <form action="" method="POST">
+                            <div class="columns">
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Name</label>
+                                        <div class="control">
+                                            <input type="text" class="input" placeholder="Enter name">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Email</label>
+                                        <div class="control">
+                                            <input type="email" class="input" placeholder="Enter email">
+                                        </div>
+                                    </div>
+                                    <p class="is-size-6">Click <button class="no-acc-btn">here </button> to Log in</p>
+                                </div>
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Address</label>
+                                        <div class="control">
+                                            <input type="text" class="input" placeholder="Enter address">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Phone Number</label>
+                                        <div class="control">
+                                            <input type="number"
+                                                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                                type="number" maxlength="11" class="input" placeholder="09xxxxxxxxx">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Password</label>
+                                        <div class="control">
+                                            <input type="password" class="input" placeholder="Enter Password">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Confirm Password</label>
+                                        <div class="control">
+                                            <input type="password" class="input" placeholder="Confirm your password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="has-text-centered">
+                                <button type="submit" class="button button-submit is-warning">Register</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+            <div id="loginModal" class="modal">
+                <div class="modal-background"
+                    onclick="document.getElementById('loginModal').classList.remove('is-active')">
+                </div>
+                <div class="modal-card">
+                    <header class="modal-card-head has-background-dark ">
+                        <p class="modal-card-title has-text-weight-bold has-text-white has-text-centered">Log in</p>
+                        <button class="delete" aria-label="close"
+                            onclick="document.getElementById('loginModal').classList.remove('is-active')"></button>
+                    </header>
+                    <section class="modal-card-body has-background-primary">
+                        <form action="" method="POST">
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input type="email" class="input" placeholder="Enter Email">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Password</label>
+                                <div class="control">
+                                    <input type="password" class="input" placeholder="Enter your password">
+                                </div>
+                            </div>
+                            <div class="has-text-centered">
+                                <button type="submit" class="button button-submit is-warning">Login</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
