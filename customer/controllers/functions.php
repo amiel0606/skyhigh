@@ -56,8 +56,15 @@ function loginUser($conn, $email, $password)
         $_SESSION["contact"] = $userExists["contact"];
         $_SESSION["role"] = $userExists["role"];
         $_SESSION["address"] = $userExists["address"];
-
-        header("location: ../index.php?error=none");
+    
+        if ($userExists["role"] === "admin") {
+            header("location: ../../admin_panel/index.php?error=none");
+        } elseif ($userExists["role"] === "customer") {
+            header("location: ../index.php?error=none");
+        } 
+        else {
+            header("location: ../index.php?error=InvalidRole");
+        }
         exit();
     }
 }
