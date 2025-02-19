@@ -46,17 +46,18 @@
 
 <body>
     <div class="sidebar">
-        <figure class="image is-128x128">
-            <img class="is-rounded" src="https://via.placeholder.com/128" alt="Profile">
+        <figure class="image is-128x128 ml-6 mb-6">
+            <img class="is-rounded" src="./assets/images/dp.jpg" alt="Profile">
         </figure>
-        <h3 class="title is-4">ADMIN</h3>
+        <h3 class="title is-4 has-text-centered">ADMIN</h3>
         <button class="button is-danger is-fullwidth">Log out</button>
-        <aside class="menu">
+        <hr>
+        <aside class="menu mt-6">
             <ul class="menu-list">
-                <li><a class="is-active">Dashboard</a></li>
-                <li><a>Mechanics</a></li>
-                <li><a>Inventory</a></li>
-                <li><a>Customer</a></li>
+                <li><a><i class="fa-solid fa-house mr-6"></i>Dashboard</a></li>
+                <li><a><i class="fa-solid fa-wrench mr-6"></i>Mechanics</a></li>
+                <li><a><i class="fa-solid fa-gear mr-6"></i>Inventory</a></li>
+                <li><a><i class="fa-solid fa-users mr-6"></i>Customer</a></li>
             </ul>
         </aside>
     </div>
@@ -84,10 +85,10 @@
                         <p class="title has-text-weight-bold mt-6" >Weekly New Users: <span class="is-size-1">50</span></p>
                     </div>
                     <div class="buttons mt-auto">
-                        <button class="button is-danger is-fullwidth circle-button">View Analytics</button>
-                        <button class="button is-danger is-fullwidth circle-button">View Scheduled</button>
-                        <button class="button is-danger is-fullwidth circle-button">View Orders</button>
-                        <button class="button is-danger is-fullwidth circle-button">Chat</button>
+                        <button class="button is-danger is-fullwidth circle-button"> <span class="icon-text"> <span class="icon"> <i class="fa-solid fa-chart-line"></i> </span> <span>View Analytics</span> </span></button>
+                        <button class="button is-danger is-fullwidth circle-button"> <span class="icon-text"> <span class="icon"> <i class="fa-solid fa-calendar-days"></i> </span> <span>View Scheduled</span> </span></button>
+                        <button class="button is-danger is-fullwidth circle-button"><span class="icon-text"> <span class="icon"> <i class="fa-solid fa-list"></i> </span> <span>View Orders</span> </span> </button>
+                        <button class="button is-danger is-fullwidth circle-button"><span class="icon-text"> <span class="icon"> <i class="fa-solid fa-comments"></i> </span> <span>Chat</span> </span></button>
                     </div>
                 </div>
             </div>
