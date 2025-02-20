@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 13, 2025 at 06:33 PM
+-- Generation Time: Feb 20, 2025 at 10:31 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -239,15 +239,17 @@ CREATE TABLE `tbl_appointments` (
   `vehicle` varchar(255) NOT NULL,
   `service` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL,
-  `time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `tbl_appointments`
 --
 
-INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`, `vehicle`, `service`, `date`, `time`) VALUES
-(12, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'Imus, 80bucks', '09940576891', 'haha', 'sss', '2025-02-14', '13:32');
+INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`, `vehicle`, `service`, `date`, `time`, `status`) VALUES
+(12, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'Imus, 80bucks', '09940576891', 'haha', 'sss', '2025-02-14', '13:32', 'Confirmed'),
+(13, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'Imus, 80bucks', '09940576891', 'ehehezzxc', 'heheh', '2025-02-21', '10:27', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -417,7 +419,7 @@ ALTER TABLE `sizes`
 -- AUTO_INCREMENT for table `tbl_appointments`
 --
 ALTER TABLE `tbl_appointments`
-  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
