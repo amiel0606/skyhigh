@@ -2,7 +2,9 @@
 session_start();
 date_default_timezone_set('Asia/Manila');
 $today = date(format: 'Y-m-d');
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -176,6 +178,18 @@ $today = date(format: 'Y-m-d');
 
         .dashed {
             border-style: dashed;
+        }
+
+        .custom-modal {
+            background: transparent;
+        }
+
+        .custom-box {
+            background: rgba(70, 130, 180, 0.9);
+
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
         }
     </style>
     <nav class="navbar navbar-expand-lg">

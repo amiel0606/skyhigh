@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require '../../vendor/autoload.php';
 function emptyInputSignup($name, $email, $address, $phone, $password, $confPassword)
 {
     return empty($name) || empty($email) || empty($address) || empty($phone) || empty($password) || empty($confPassword);
@@ -38,7 +41,7 @@ function emptyInputLogin($email, $password)
 function loginUser($conn, $email, $password)
 {
     $userExists = userExist($conn, $email);
-    
+
     if ($userExists == false) {
         header("location: ../index.php?error=WrongLogin");
         exit();
@@ -56,22 +59,53 @@ function loginUser($conn, $email, $password)
         $_SESSION["contact"] = $userExists["contact"];
         $_SESSION["role"] = $userExists["role"];
         $_SESSION["address"] = $userExists["address"];
-    
+        $_SESSION["verified"] = $userExists["verified"];
+
         if ($userExists["role"] === "admin") {
             header("location: ../../admin_panel/index.php?error=none");
         } elseif ($userExists["role"] === "customer") {
             header("location: ../index.php?error=none");
-        } 
-        else {
+        } else {
             header("location: ../index.php?error=InvalidRole");
         }
         exit();
     }
 }
+function sendOTPEmail($email, $otp)
+{
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; 
+        $mail->SMTPAuth = true;
+        $mail->Username = 'otp.skyhigh@gmail.com';
+        $mail->Password = 'xgwuumprorznbwvc';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('otp.skyhigh@gmail.com', 'Skyhigh Motorcycle Parts');
+        $mail->addAddress($email);
+        $mail->isHTML(true);
+        $mail->Subject = 'Verify Your Email - OTP Code';
+        $mail->Body = "
+            <p>Hello,</p>
+            <p>Your OTP code is: <b>$otp</b></p>
+            <p>This code will expire in 10 minutes.</p>
+            <p>Thank you.</p>
+        ";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Email sending failed: " . $mail->ErrorInfo);
+    }
+}
 
 function createUser($conn, $name, $email, $address, $phone, $password)
 {
-    $sql = "INSERT INTO tbl_users (name, username, address, contact, password, role) VALUES (?, ?, ?, ?, ?, ?)";
+    $otp = mt_rand(100000, 999999); 
+    $otp_expiry = date("Y-m-d H:i:s", strtotime("+10 minutes")); 
+
+    $sql = "INSERT INTO tbl_users (name, username, address, contact, password, role, otp, otp_expiry) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../index.php?error=stmtFailed");
@@ -81,10 +115,12 @@ function createUser($conn, $name, $email, $address, $phone, $password)
     $hashedPass = password_hash($password, PASSWORD_DEFAULT);
     $role = "customer";
 
-    mysqli_stmt_bind_param($stmt, "ssssss", $name, $email, $address, $phone, $hashedPass, $role);
+    mysqli_stmt_bind_param($stmt, "ssssssss", $name, $email, $address, $phone, $hashedPass, $role, $otp, $otp_expiry);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-    
+
+    sendOTPEmail($email, $otp); 
+
     header("location: ../index.php?success=Registered");
     exit();
 }

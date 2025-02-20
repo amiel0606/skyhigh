@@ -5,7 +5,9 @@ $name = isset($_SESSION["name"]) ? $_SESSION["name"] : null;
 $contact = isset($_SESSION["contact"]) ? $_SESSION["contact"] : null;
 $role = isset($_SESSION["role"]) ? $_SESSION["role"] : null;
 $address = isset($_SESSION["address"]) ? $_SESSION["address"] : null;
-
+if (!isset($_SESSION['verified'])) {
+    $_SESSION['verified'] = "false";
+}
 ?>
 <style>
     .input {
@@ -53,7 +55,8 @@ $address = isset($_SESSION["address"]) ? $_SESSION["address"] : null;
                         <div class="field">
                             <label class="label">Name</label>
                             <div class="control">
-                                <input type="text" name="name" value="<?php echo $name; ?>" class="input" placeholder="Enter name">
+                                <input type="text" name="name" value="<?php echo $name; ?>" class="input"
+                                    placeholder="Enter name">
                             </div>
                         </div>
                         <div class="field">
@@ -116,6 +119,44 @@ $address = isset($_SESSION["address"]) ? $_SESSION["address"] : null;
         </section>
     </div>
 </div>
+<div class="modal custom-modal" id="emailModal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="custom-box">
+            <h1 class="title is-3">Verify your email address</h1>
+            <p class="mb-4">
+                Please confirm that you want to use this as your Skyhigh account email address.
+                Once it’s done, you will be able to start browsing. Thank you.
+            </p>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-rounded" type="text" placeholder="Enter OTP">
+                </div>
+            </div>
+            <button class="button is-dark is-rounded mt-3">Submit</button>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let isVerified = <?php echo json_encode($_SESSION['verified']); ?>;
+        let isLoggedIn = <?php echo isset($_SESSION["username"]) ? 'true' : 'false'; ?>;
+
+        if (isLoggedIn && isVerified === "false") {
+            document.getElementById("emailModal").classList.add("is-active");
+        }
+
+        document.querySelector(".modal-close").addEventListener("click", function () {
+            document.getElementById("emailModal").classList.remove("is-active");
+        });
+
+        document.querySelector(".modal-background").addEventListener("click", function () {
+            document.getElementById("emailModal").classList.remove("is-active");
+        });
+    });
+
+</script>
 <?php
 include_once './includes/footer.php';
 ?>
