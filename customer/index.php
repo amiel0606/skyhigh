@@ -26,6 +26,10 @@ if (!isset($_SESSION['verified'])) {
         appearance: none;
         margin: 0;
     }
+
+    .is-secondary {
+        color: #262f36;
+    }
 </style>
 
 <p class="logo-text-motorcycle is-size-3 text-center">Just Ride & Go with SkyHigh.</p>
@@ -121,22 +125,20 @@ if (!isset($_SESSION['verified'])) {
 </div>
 <div class="modal custom-modal" id="emailModal">
     <div class="modal-background"></div>
-    <div class="modal-content">
-        <div class="custom-box">
-            <h1 class="title is-3">Verify your email address</h1>
-            <p class="mb-4">
-                Please confirm that you want to use this as your Skyhigh account email address.
-                Once it’s done, you will be able to start browsing. Thank you.
-            </p>
-            <div class="field">
-                <div class="control">
-                    <input class="input is-rounded" type="text" placeholder="Enter OTP">
-                </div>
+    <div class="modal-content custom-box">
+        <h1 class="title is-3">Verify your email address</h1>
+        <p class="mb-4">
+            Please confirm that you want to use this as your Skyhigh account email address.
+            Once it’s done, you will be able to start browsing. Thank you.
+        </p>
+        <div class="field">
+            <div class="control">
+                <input id="otpInput" class="input is-rounded" type="text" placeholder="Enter OTP">
             </div>
-            <button class="button is-dark is-rounded mt-3">Submit</button>
         </div>
+        <button id="verifyOTP" class="button is-dark is-rounded mt-3">Submit</button>
+        <a href="#" id="resendOTP" class="has-text-weight-semibold is-secondary">Resend OTP</a>
     </div>
-    <button class="modal-close is-large" aria-label="close"></button>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -147,15 +149,56 @@ if (!isset($_SESSION['verified'])) {
             document.getElementById("emailModal").classList.add("is-active");
         }
 
-        document.querySelector(".modal-close").addEventListener("click", function () {
-            document.getElementById("emailModal").classList.remove("is-active");
-        });
-
         document.querySelector(".modal-background").addEventListener("click", function () {
             document.getElementById("emailModal").classList.remove("is-active");
         });
+        $("#resendOTP").click(function (e) {
+            e.preventDefault();
+            resendOTP();
+        });
+        $('#verifyOTP').click(function () {
+            verifyOTP();
+        });
     });
+    function resendOTP() {
+        let url = './controllers/resendOTP.php';
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("OTP has been resent to your email.");
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function () {
+                alert("Failed to resend OTP.");
+            }
+        });
+    }
 
+    function verifyOTP() {
+        let otpValue = document.getElementById("otpInput").value; 
+        $.ajax({
+            url: './controllers/verifyOTP.php',
+            type: "POST",
+            data: { otp: otpValue },
+            dataType: "json",
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("Your email has been verified!");
+                    document.getElementById("emailModal").classList.remove("is-active");
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert("Failed to verify OTP. Please try again.");
+            }
+        });
+    }
 </script>
 <?php
 include_once './includes/footer.php';

@@ -60,6 +60,7 @@ function loginUser($conn, $email, $password)
         $_SESSION["role"] = $userExists["role"];
         $_SESSION["address"] = $userExists["address"];
         $_SESSION["verified"] = $userExists["verified"];
+        $_SESSION["otp"] = $userExists["otp"];
 
         if ($userExists["role"] === "admin") {
             header("location: ../../admin_panel/index.php?error=none");
@@ -90,7 +91,6 @@ function sendOTPEmail($email, $otp)
         $mail->Body = "
             <p>Hello,</p>
             <p>Your OTP code is: <b>$otp</b></p>
-            <p>This code will expire in 10 minutes.</p>
             <p>Thank you.</p>
         ";
 
@@ -103,9 +103,8 @@ function sendOTPEmail($email, $otp)
 function createUser($conn, $name, $email, $address, $phone, $password)
 {
     $otp = mt_rand(100000, 999999); 
-    $otp_expiry = date("Y-m-d H:i:s", strtotime("+10 minutes")); 
 
-    $sql = "INSERT INTO tbl_users (name, username, address, contact, password, role, otp, otp_expiry) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tbl_users (name, username, address, contact, password, role, otp) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../index.php?error=stmtFailed");
@@ -115,7 +114,7 @@ function createUser($conn, $name, $email, $address, $phone, $password)
     $hashedPass = password_hash($password, PASSWORD_DEFAULT);
     $role = "customer";
 
-    mysqli_stmt_bind_param($stmt, "ssssssss", $name, $email, $address, $phone, $hashedPass, $role, $otp, $otp_expiry);
+    mysqli_stmt_bind_param($stmt, "sssssss", $name, $email, $address, $phone, $hashedPass, $role, $otp);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
