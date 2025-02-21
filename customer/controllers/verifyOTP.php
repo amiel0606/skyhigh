@@ -18,6 +18,8 @@ $stmt->bind_result($storedOtp);
 $stmt->fetch();
 $stmt->close();
 
+
+
 if ($storedOtp == $otpSent) {
     $updateSql = "UPDATE tbl_users SET verified = 'true' WHERE uID = ?";
     $updateStmt = $conn->prepare($updateSql);
