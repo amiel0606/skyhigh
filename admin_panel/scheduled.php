@@ -17,6 +17,18 @@
         height: 30px;
         border-radius: 50%;
     }
+
+    .table-container {
+        height: 700px;
+        overflow-y: auto;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 1;
+    }
 </style>
 <section class="section">
     <div class="container">
@@ -79,13 +91,13 @@
 </section>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        fetchSchedules(); 
+        fetchSchedules();
         let searchTimeout;
         document.getElementById("searchInput").addEventListener("input", function () {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetchSchedules(this.value);
-            }, 300); 
+            }, 300);
         });
     });
 
@@ -99,7 +111,7 @@
             .then(response => response.json())
             .then(data => {
                 let tableBody = document.getElementById("scheduleTableBody");
-                tableBody.innerHTML = ""; 
+                tableBody.innerHTML = "";
 
                 if (data.length === 0) {
                     tableBody.innerHTML = `<tr><td colspan="7" class="has-text-centered">No results found</td></tr>`;

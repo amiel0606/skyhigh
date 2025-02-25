@@ -140,66 +140,10 @@ if (!isset($_SESSION['verified'])) {
         <a href="#" id="resendOTP" class="has-text-weight-semibold is-secondary">Resend OTP</a>
     </div>
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let isVerified = <?php echo json_encode($_SESSION['verified']); ?>;
-        let isLoggedIn = <?php echo isset($_SESSION["username"]) ? 'true' : 'false'; ?>;
+<div id="isVerified" style="display:none;"><?php echo json_encode($_SESSION['verified']); ?></div>
+<div id="isLoggedIn" style="display:none;"><?php echo isset($_SESSION["username"]) ? 'true' : 'false'; ?></div>
+<script src="./js/otp.js"></script>
 
-        if (isLoggedIn && isVerified === "false") {
-            document.getElementById("emailModal").classList.add("is-active");
-        }
-
-        document.querySelector(".modal-background").addEventListener("click", function () {
-            document.getElementById("emailModal").classList.remove("is-active");
-        });
-        $("#resendOTP").click(function (e) {
-            e.preventDefault();
-            resendOTP();
-        });
-        $('#verifyOTP').click(function () {
-            verifyOTP();
-        });
-    });
-    function resendOTP() {
-        let url = './controllers/resendOTP.php';
-        $.ajax({
-            url: url,
-            type: "POST",
-            dataType: "json",
-            success: function (response) {
-                if (response.status === "success") {
-                    alert("OTP has been resent to your email.");
-                } else {
-                    alert("Error: " + response.message);
-                }
-            },
-            error: function () {
-                alert("Failed to resend OTP.");
-            }
-        });
-    }
-
-    function verifyOTP() {
-        let otpValue = document.getElementById("otpInput").value; 
-        $.ajax({
-            url: './controllers/verifyOTP.php',
-            type: "POST",
-            data: { otp: otpValue },
-            dataType: "json",
-            success: function (response) {
-                if (response.status === "success") {
-                    alert("Your email has been verified!");
-                    document.getElementById("emailModal").classList.remove("is-active");
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function () {
-                alert("Failed to verify OTP. Please try again.");
-            }
-        });
-    }
-</script>
 <?php
 include_once './includes/footer.php';
 ?>
