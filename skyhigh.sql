@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 20, 2025 at 10:31 PM
+-- Generation Time: Feb 21, 2025 at 04:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -264,15 +264,18 @@ CREATE TABLE `tbl_users` (
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `contact` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `address` varchar(255) NOT NULL
+  `address` varchar(255) NOT NULL,
+  `verified` varchar(255) NOT NULL DEFAULT 'false',
+  `otp` int(6) NOT NULL,
+  `otp_expiry` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 
 --
 -- Dumping data for table `tbl_users`
 --
 
-INSERT INTO `tbl_users` (`uID`, `username`, `name`, `password`, `role`, `contact`, `address`) VALUES
-(32, 'amiellapid06@gmail.com', 'Amiel Carhyl Lapid', '$2y$10$iYqFqwehhMxZ8Sr1OioHHOQX1X16BZWn1/cTY3wZMfuA18gGALCWS', 'customer', '09940576891', 'Imus, 80bucks');
+INSERT INTO `tbl_users` (`uID`, `username`, `name`, `password`, `role`, `contact`, `address`, `verified`, `otp`, `otp_expiry`) VALUES
+(37, 'amiellapid06@gmail.com', 'Amiel Carhyl Lapid', '$2y$10$QtHhKU7wzgEaTMP.L0TbyefFjsxpTWULMuvlYBkidp023TDi4Drwi', 'customer', '09940576781', 'emoz sabana', 'true', 223575, '2025-02-21 02:22:09');
 
 --
 -- Indexes for dumped tables
@@ -425,7 +428,7 @@ ALTER TABLE `tbl_appointments`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `uID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `uID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

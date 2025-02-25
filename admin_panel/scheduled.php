@@ -85,7 +85,7 @@
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
                 fetchSchedules(this.value);
-            }, 300); /
+            }, 300); 
         });
     });
 

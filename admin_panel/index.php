@@ -19,8 +19,8 @@
         <div class="column">
             <div class="dashboard-card full-height d-flex flex-column mt-6">
                 <div class="content">
-                    <p class="title has-text-weight-bold mb-6">Weekly Appointments Scheduled: <span
-                            class="is-size-1">50</span></p>
+                    <p class="title has-text-weight-bold mb-6">Weekly Appointments Scheduled: <br>
+                        <span class="is-size-1">  50</span></p>
                     <p class="title has-text-weight-bold mt-6">Weekly New Users: <span class="is-size-1">50</span>
                     </p>
                 </div>
