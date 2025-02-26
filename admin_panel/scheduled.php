@@ -1,10 +1,5 @@
 <?php include_once('./includes/header.php'); ?>
 <style>
-    .table-container {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
     .sticky-header th {
         position: sticky;
         top: 0;
@@ -18,8 +13,12 @@
         border-radius: 50%;
     }
 
+    .container {
+        margin-left: 350px;
+    }
+
     .table-container {
-        height: 700px;
+        height: 600px;
         overflow-y: auto;
     }
 
@@ -57,6 +56,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Email</th>
                         <th>Address</th>
                         <th>CP No.</th>
                         <th>Vehicle</th>
@@ -100,26 +100,30 @@
                         onclick="document.getElementById('appointmentModal').classList.remove('is-active')"></button>
                 </header>
                 <section class="modal-card-body has-background-white">
-                    <form action="./controllers/setAppointment.php" method="POST">
+                    <form id="appointmentForm">
+                        <input type="hidden" name="appointmentId" id="appointmentId">
                         <div class="columns dashed">
                             <div class="column">
                                 <h5 class="title is-5">Client Information</h5>
                                 <div class="field">
                                     <label class="label">Name</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentName" name="name" value="<?php echo $name; ?>" class="input" placeholder="Enter name">
+                                        <input type="text" id="appointmentName" name="name" disabled class="input"
+                                            placeholder="Enter name">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control">
-                                        <input type="email" id="appointmentEmail" name="username" value="<?php echo $username; ?>" class="input" placeholder="Enter email">
+                                        <input type="email" id="appointmentEmail" name="username" disabled class="input"
+                                            placeholder="Enter email">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Address</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentAddress" name="address" value="<?php echo $address; ?>" class="input" placeholder="Enter address">
+                                        <input type="text" id="appointmentAddress" name="address" disabled class="input"
+                                            placeholder="Enter address">
                                     </div>
                                 </div>
                                 <div class="field">
@@ -127,7 +131,7 @@
                                     <div class="control">
                                         <input name="contact" type="number" id="appointmentContact"
                                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                            type="number" value="<?php echo $contact; ?>" maxlength="11" class="input"
+                                            type="number" maxlength="11" class="input" disabled
                                             placeholder="09xxxxxxxxx">
                                     </div>
                                 </div>
@@ -137,25 +141,29 @@
                                 <div class="field">
                                     <label class="label">Type of Vehicle</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentVehicle" name="vehicle" class="input" placeholder="Enter vehicle type">
+                                        <input type="text" id="appointmentVehicle" disabled name="vehicle" class="input"
+                                            placeholder="Enter vehicle type">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Select Service</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentService" name="service" class="input" placeholder="Enter service">
+                                        <input type="text" id="appointmentService" disabled name="service" class="input"
+                                            placeholder="Enter service">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Select Time</label>
                                     <div class="control">
-                                        <input type="time" id="appointmentTime" name="time" class="input" min="10:00" max="20:00">
+                                        <input type="time" id="appointmentTime" name="time" class="input" min="10:00"
+                                            max="20:00">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Date</label>
                                     <div class="control">
-                                        <input type="date" id="appointmentDate" name="date" class="input" min="<?php echo $today; ?>">
+                                        <input type="date" id="appointmentDate" name="date" class="input"
+                                            min="<?php echo $today; ?>">
                                     </div>
                                 </div>
                             </div>
@@ -168,6 +176,11 @@
                 </section>
             </div>
         </div>
+        <!-- Loading Indicator (hidden by default) -->
+        <div id="loading" style="display: none;">
+            <span>Loading...</span>
+        </div>
+
     </div>
 </section>
 <script src="../node_modules/axios/dist/axios.min.js"></script>
@@ -184,26 +197,31 @@
         });
     });
 
-    function fetchSchedules(searchQuery = '') {
+    async function fetchSchedules(searchQuery = '') {
+        document.getElementById('loading').style.display = 'block';
+
         let url = './controller/getSchedules.php';
         if (searchQuery) {
             url += `?query=${encodeURIComponent(searchQuery)}`;
         }
-        axios.get(url)
-            .then(response => {
-                const data = response.data; 
 
-                let tableBody = document.getElementById("scheduleTableBody");
-                tableBody.innerHTML = "";
+        try {
+            // Wait for the response from the server
+            const response = await axios.get(url);
+            const data = response.data;
 
-                if (data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="7" class="has-text-centered">No results found</td></tr>`;
-                    return;
-                }
+            let tableBody = document.getElementById("scheduleTableBody");
+            tableBody.innerHTML = "";
 
-                data.forEach(schedule => {
-                    let row = `<tr>
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="has-text-centered">No results found</td></tr>`;
+                return;
+            }
+
+            data.forEach(schedule => {
+                let row = `<tr>
                 <td>${schedule.name}</td>
+                <td>${schedule.username}</td>
                 <td>${schedule.address}</td>
                 <td>${schedule.contact}</td>
                 <td>${schedule.vehicle}</td>
@@ -216,7 +234,7 @@
                 </td>
                 <td>
                     <div class="buttons">
-                        <button class="button is-small is-success">
+                        <button id=${schedule.a_id} class="button btn-accept is-small is-success">
                             <span class="icon">
                                 <i class="fas fa-check"></i>
                             </span>
@@ -234,20 +252,49 @@
                     </div>
                 </td>
             </tr>`;
-                    tableBody.innerHTML += row;
-                });
+                tableBody.innerHTML += row;
+            });
 
-                const rescheduleButtons = document.querySelectorAll('.showResched');
-                rescheduleButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        const appointmentId = this.id; 
-                        fetchScheduleDetails(appointmentId);
-                    });
+            const rescheduleButtons = document.querySelectorAll('.showResched');
+            rescheduleButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const appointmentId = this.id;
+                    fetchScheduleDetails(appointmentId);
                 });
+            });
+            addApproveButtonEventListeners();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
 
+    function addApproveButtonEventListeners() {
+        const approveButtons = document.querySelectorAll('.btn-accept');
+        approveButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const appointmentId = this.id;                  
+                approveAppointment(appointmentId);
+            });
+        });
+    }
+
+    function approveAppointment(appointmentId) {
+        const data = new URLSearchParams();
+        data.append('appointmentId', appointmentId); 
+
+        axios.post('./controller/changeAppointmentStatus.php', data)
+            .then(response => {
+                if (response.data.success) {
+                    alert('Appointment Approved!');
+                    fetchSchedules(); 
+                } else {
+                    alert('Failed to approve the appointment!');
+                }
             })
             .catch(error => {
-                console.error("Error fetching data:", error);
+                console.error('There was an error approving the appointment:', error);
             });
     }
 
@@ -255,8 +302,9 @@
         let url = `./controller/getSchedules.php?id=${appointmentId}`;
         axios.get(url)
             .then(response => {
-                const schedule = response.data; 
+                const schedule = response.data;
                 document.getElementById('appointmentName').value = schedule.name;
+                document.getElementById('appointmentId').value = schedule.a_id;
                 document.getElementById('appointmentEmail').value = schedule.username;
                 document.getElementById('appointmentAddress').value = schedule.address;
                 document.getElementById('appointmentContact').value = schedule.contact;
@@ -265,12 +313,25 @@
                 document.getElementById('appointmentDate').value = schedule.date;
                 document.getElementById('appointmentTime').value = schedule.time;
                 document.getElementById('appointmentModal').classList.add('is-active');
-
             })
             .catch(error => {
                 console.error("Error fetching schedule details:", error);
             });
     }
+
+    document.getElementById('appointmentForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        axios.post('./controller/updateAppointment.php', formData)
+            .then(response => {
+                alert('Appointment saved successfully');
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+                alert('There was an error saving the appointment');
+            });
+    });
 </script>
 
 
