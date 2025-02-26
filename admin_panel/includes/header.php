@@ -5,12 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKYHIGH MOTORCYCLE | Admin</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --bulma-primary-h: 0deg;
@@ -51,6 +48,10 @@
         .content {
             flex-grow: 1;
         }
+
+        .is-primary {
+            background-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important;
+        }
     </style>
 </head>
 
@@ -64,7 +65,7 @@
         <hr>
         <aside class="menu mt-6">
             <ul class="menu-list">
-                <li><a><i class="fa-solid fa-house mr-6"></i>Dashboard</a></li>
+                <li><a href="./index.php"><i class="fa-solid fa-house mr-6"></i>Dashboard</a></li>
                 <li><a><i class="fa-solid fa-wrench mr-6"></i>Mechanics</a></li>
                 <li><a href="./inventory.php"><i class="fa-solid fa-gear mr-6"></i>Inventory</a></li>
                 <li><a><i class="fa-solid fa-users mr-6"></i>Customer</a></li>

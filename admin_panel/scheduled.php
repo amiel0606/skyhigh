@@ -63,6 +63,7 @@
                         <th>Service</th>
                         <th>Date/Time</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="scheduleTableBody">
@@ -87,8 +88,90 @@
                 </span>
             </button>
         </div>
+        <!-- APPOINTMENT MODAL -->
+        <div id="appointmentModal" class="modal">
+            <div class="modal-background"
+                onclick="document.getElementById('appointmentModal').classList.remove('is-active')">
+            </div>
+            <div class="modal-card">
+                <header class="modal-card-head has-background-dark ">
+                    <p class="modal-card-title has-text-weight-bold has-text-white">Re-schedule an appointment</p>
+                    <button class="delete" aria-label="close"
+                        onclick="document.getElementById('appointmentModal').classList.remove('is-active')"></button>
+                </header>
+                <section class="modal-card-body has-background-white">
+                    <form action="./controllers/setAppointment.php" method="POST">
+                        <div class="columns dashed">
+                            <div class="column">
+                                <h5 class="title is-5">Client Information</h5>
+                                <div class="field">
+                                    <label class="label">Name</label>
+                                    <div class="control">
+                                        <input type="text" id="appointmentName" name="name" value="<?php echo $name; ?>" class="input" placeholder="Enter name">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Email</label>
+                                    <div class="control">
+                                        <input type="email" id="appointmentEmail" name="username" value="<?php echo $username; ?>" class="input" placeholder="Enter email">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Address</label>
+                                    <div class="control">
+                                        <input type="text" id="appointmentAddress" name="address" value="<?php echo $address; ?>" class="input" placeholder="Enter address">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Phone Number</label>
+                                    <div class="control">
+                                        <input name="contact" type="number" id="appointmentContact"
+                                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                            type="number" value="<?php echo $contact; ?>" maxlength="11" class="input"
+                                            placeholder="09xxxxxxxxx">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <h5 class="title is-5">Appointment Information</h5>
+                                <div class="field">
+                                    <label class="label">Type of Vehicle</label>
+                                    <div class="control">
+                                        <input type="text" id="appointmentVehicle" name="vehicle" class="input" placeholder="Enter vehicle type">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Select Service</label>
+                                    <div class="control">
+                                        <input type="text" id="appointmentService" name="service" class="input" placeholder="Enter service">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Select Time</label>
+                                    <div class="control">
+                                        <input type="time" id="appointmentTime" name="time" class="input" min="10:00" max="20:00">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Date</label>
+                                    <div class="control">
+                                        <input type="date" id="appointmentDate" name="date" class="input" min="<?php echo $today; ?>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="has-text-centered mt-3">Appointment Starts at 10:00 AM</p>
+                        <div class="has-text-centered">
+                            <button type="submit" class="button button-submit is-success">SAVE</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
     </div>
 </section>
+<script src="../node_modules/axios/dist/axios.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         fetchSchedules();
@@ -106,10 +189,10 @@
         if (searchQuery) {
             url += `?query=${encodeURIComponent(searchQuery)}`;
         }
+        axios.get(url)
+            .then(response => {
+                const data = response.data; 
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
                 let tableBody = document.getElementById("scheduleTableBody");
                 tableBody.innerHTML = "";
 
@@ -120,22 +203,73 @@
 
                 data.forEach(schedule => {
                     let row = `<tr>
-                    <td>${schedule.name}</td>
-                    <td>${schedule.address}</td>
-                    <td>${schedule.contact}</td>
-                    <td>${schedule.vehicle}</td>
-                    <td>${schedule.service}</td>
-                    <td>${schedule.date} ${schedule.time}</td>
-                    <td>
-                        <span class="tag ${schedule.status === 'Confirmed' ? 'is-success' : 'is-warning'}">
-                            ${schedule.status}
-                        </span>
-                    </td>
-                </tr>`;
+                <td>${schedule.name}</td>
+                <td>${schedule.address}</td>
+                <td>${schedule.contact}</td>
+                <td>${schedule.vehicle}</td>
+                <td>${schedule.service}</td>
+                <td>${schedule.date} ${schedule.time}</td>
+                <td>
+                    <span class="tag ${schedule.status === 'Confirmed' ? 'is-success' : 'is-warning'}">
+                        ${schedule.status}
+                    </span>
+                </td>
+                <td>
+                    <div class="buttons">
+                        <button class="button is-small is-success">
+                            <span class="icon">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </button>
+                        <button id=${schedule.a_id} class="button btn-reject is-small is-danger">
+                            <span class="icon">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </button>
+                        <button id=${schedule.a_id} class="button showResched is-small is-warning">
+                            <span class="icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </span>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
                     tableBody.innerHTML += row;
                 });
+
+                const rescheduleButtons = document.querySelectorAll('.showResched');
+                rescheduleButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const appointmentId = this.id; 
+                        fetchScheduleDetails(appointmentId);
+                    });
+                });
+
             })
-            .catch(error => console.error("Error fetching data:", error));
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }
+
+    function fetchScheduleDetails(appointmentId) {
+        let url = `./controller/getSchedules.php?id=${appointmentId}`;
+        axios.get(url)
+            .then(response => {
+                const schedule = response.data; 
+                document.getElementById('appointmentName').value = schedule.name;
+                document.getElementById('appointmentEmail').value = schedule.username;
+                document.getElementById('appointmentAddress').value = schedule.address;
+                document.getElementById('appointmentContact').value = schedule.contact;
+                document.getElementById('appointmentVehicle').value = schedule.vehicle;
+                document.getElementById('appointmentService').value = schedule.service;
+                document.getElementById('appointmentDate').value = schedule.date;
+                document.getElementById('appointmentTime').value = schedule.time;
+                document.getElementById('appointmentModal').classList.add('is-active');
+
+            })
+            .catch(error => {
+                console.error("Error fetching schedule details:", error);
+            });
     }
 </script>
 
