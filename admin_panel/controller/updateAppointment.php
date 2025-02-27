@@ -2,6 +2,11 @@
 require_once './dbCon.php';
 session_start();
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../../vendor/autoload.php'; 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $appointmentId = mysqli_real_escape_string($conn, $_POST['appointmentId']);
     $name = mysqli_real_escape_string($conn, $_POST['name']);
@@ -14,18 +19,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date = mysqli_real_escape_string($conn, $_POST['date']);
     
     if (empty($appointmentId) || empty($name) || empty($username) || empty($address) || empty($contact) || empty($vehicle) || empty($service) || empty($time) || empty($date)) {
-        echo json_encode(value: ["status" => "error", "message" => "Please fill in all the fields."]);
+        echo json_encode(["status" => "error", "message" => "Please fill in all the fields."]);
         exit();
     }
 
     $sql = "UPDATE tbl_appointments 
-            SET name = ?, username = ?, address = ?, contact = ?, vehicle = ?, service = ?, time = ?, date = ? 
-            WHERE appointmentId = ?";
+            SET name = ?, username = ?, address = ?, contact = ?, vehicle = ?, service = ?, time = ?, date = ?, status = 'Pending' 
+            WHERE a_id = ?";
 
     if ($stmt = mysqli_prepare($conn, $sql)) {
         mysqli_stmt_bind_param($stmt, "ssssssssi", $name, $username, $address, $contact, $vehicle, $service, $time, $date, $appointmentId);
 
         if (mysqli_stmt_execute($stmt)) {
+            sendEmailNotification($username, $name, $service, $date, $time);
             echo json_encode(["status" => "success", "message" => "Appointment updated successfully."]);
         } else {
             echo json_encode(["status" => "error", "message" => "Failed to update the appointment."]);
@@ -40,4 +46,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 } else {
     echo json_encode(["status" => "error", "message" => "Invalid request method."]);
     exit();
+}
+
+function sendEmailNotification($username, $name, $service, $date, $time) {
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';  
+        $mail->SMTPAuth = true;
+        $mail->Username = 'otp.skyhigh@gmail.com';  
+        $mail->Password = 'xgwuumprorznbwvc';     
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;  
+
+        $mail->setFrom('otp.skyhigh@gmail.com', 'Skyhigh Motorcycle Parts');
+        $mail->addAddress($username);
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Your Appointment has been Rescheduled';
+        $mail->Body    = "Dear $name,<br><br>Your appointment has been rescheduled to <strong>$date</strong> at <strong>$time</strong> for the following service: <strong>$service</strong>.<br><br>If you have any questions, feel free to contact us.<br><br>Thank you for using our service.";
+
+        $mail->send();
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
 }

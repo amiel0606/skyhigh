@@ -28,6 +28,19 @@
         background-color: white;
         z-index: 1;
     }
+
+    /* Optional: Adjust modal size */
+    .modal-content {
+        width: 400px;
+        /* You can adjust the width as needed */
+    }
+
+    /* Optional: Adjust button spacing */
+    .buttons {
+        justify-content: center;
+        gap: 15px;
+        /* Space between the buttons */
+    }
 </style>
 <section class="section">
     <div class="container">
@@ -108,21 +121,21 @@
                                 <div class="field">
                                     <label class="label">Name</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentName" name="name" disabled class="input"
+                                        <input type="text" id="appointmentName" name="name" readonly class="input"
                                             placeholder="Enter name">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control">
-                                        <input type="email" id="appointmentEmail" name="username" disabled class="input"
+                                        <input type="email" id="appointmentEmail" name="username" readonly class="input"
                                             placeholder="Enter email">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Address</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentAddress" name="address" disabled class="input"
+                                        <input type="text" id="appointmentAddress" name="address" readonly class="input"
                                             placeholder="Enter address">
                                     </div>
                                 </div>
@@ -131,7 +144,7 @@
                                     <div class="control">
                                         <input name="contact" type="number" id="appointmentContact"
                                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
-                                            type="number" maxlength="11" class="input" disabled
+                                            type="number" maxlength="11" class="input" readonly
                                             placeholder="09xxxxxxxxx">
                                     </div>
                                 </div>
@@ -141,14 +154,14 @@
                                 <div class="field">
                                     <label class="label">Type of Vehicle</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentVehicle" disabled name="vehicle" class="input"
+                                        <input type="text" id="appointmentVehicle" readonly name="vehicle" class="input"
                                             placeholder="Enter vehicle type">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Select Service</label>
                                     <div class="control">
-                                        <input type="text" id="appointmentService" disabled name="service" class="input"
+                                        <input type="text" id="appointmentService" readonly name="service" class="input"
                                             placeholder="Enter service">
                                     </div>
                                 </div>
@@ -176,11 +189,23 @@
                 </section>
             </div>
         </div>
-        <!-- Loading Indicator (hidden by default) -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box">
+                    <h4 class="title is-4">Are you sure?</h4>
+                    <p>Do you really want to cancel this appointment?</p>
+                    <div class="buttons is-centered">
+                        <button id="confirmCancelBtn" class="button is-danger">Yes, cancel</button>
+                        <button id="cancelModalBtn" class="button">No, keep it</button>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
+        </div>
         <div id="loading" style="display: none;">
             <span>Loading...</span>
         </div>
-
     </div>
 </section>
 <script src="../node_modules/axios/dist/axios.min.js"></script>
@@ -206,7 +231,6 @@
         }
 
         try {
-            // Wait for the response from the server
             const response = await axios.get(url);
             const data = response.data;
 
@@ -228,33 +252,57 @@
                 <td>${schedule.service}</td>
                 <td>${schedule.date} ${schedule.time}</td>
                 <td>
-                    <span class="tag ${schedule.status === 'Confirmed' ? 'is-success' : 'is-warning'}">
+                    <span class="tag ${schedule.status === 'Confirmed' ? 'is-success' : schedule.status === 'Declined' ? 'is-danger' : 'is-warning'}">
                         ${schedule.status}
                     </span>
                 </td>
                 <td>
-                    <div class="buttons">
-                        <button id=${schedule.a_id} class="button btn-accept is-small is-success">
-                            <span class="icon">
-                                <i class="fas fa-check"></i>
-                            </span>
-                        </button>
-                        <button id=${schedule.a_id} class="button btn-reject is-small is-danger">
-                            <span class="icon">
-                                <i class="fas fa-times"></i>
-                            </span>
-                        </button>
-                        <button id=${schedule.a_id} class="button showResched is-small is-warning">
-                            <span class="icon">
-                                <i class="fa-solid fa-calendar-days"></i>
-                            </span>
-                        </button>
-                    </div>
-                </td>
-            </tr>`;
+                    <div class="buttons">`;
+                if (schedule.status === 'Pending') {
+                    row += `
+                    <button id="${schedule.a_id}" class="button btn-accept is-small is-success">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </button>
+                    <button id="${schedule.a_id}" data-status="${schedule.status}" class="button btn-reject is-small is-danger">
+                        <span class="icon">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </button>
+                    <button id="${schedule.a_id}" class="button showResched is-small is-warning">
+                        <span class="icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </span>
+                    </button>
+                `;
+                } else if (schedule.status === 'Confirmed') {
+                    row += `
+                    <button id="${schedule.a_id}" data-status="${schedule.status}" class="button btn-reject is-small is-danger">
+                        <span class="icon">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </button>
+                    <button id="${schedule.a_id}" class="button showResched is-small is-warning">
+                        <span class="icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </span>
+                    </button>
+                `;
+                } else if (schedule.status === 'Declined') {
+                    row += `
+                    <button id="${schedule.a_id}" class="button showResched is-small is-warning">
+                        <span class="icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </span>
+                    </button>
+                `;
+                }
+
+                row += `</div></td></tr>`;
+
                 tableBody.innerHTML += row;
             });
-
             const rescheduleButtons = document.querySelectorAll('.showResched');
             rescheduleButtons.forEach(button => {
                 button.addEventListener('click', function () {
@@ -262,7 +310,9 @@
                     fetchScheduleDetails(appointmentId);
                 });
             });
+
             addApproveButtonEventListeners();
+            addRejectButtonEventListeners();
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -270,25 +320,88 @@
         }
     }
 
+
     function addApproveButtonEventListeners() {
         const approveButtons = document.querySelectorAll('.btn-accept');
         approveButtons.forEach(button => {
             button.addEventListener('click', function () {
-                const appointmentId = this.id;                  
+                const appointmentId = this.id;
                 approveAppointment(appointmentId);
             });
         });
     }
 
+    function addRejectButtonEventListeners() {
+        const rejectButtons = document.querySelectorAll('.btn-reject');
+        rejectButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const appointmentId = this.id;
+                const appointmentStatus = this.dataset.status;
+
+                if (appointmentStatus === 'Confirmed') {
+                    showConfirmationModal(appointmentId);
+                } else {
+                    rejectAppointment(appointmentId);
+                }
+            });
+        });
+    }
+    function showConfirmationModal(appointmentId) {
+        const modal = document.getElementById('confirmationModal');
+        const confirmBtn = document.getElementById('confirmCancelBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+
+        modal.classList.add('is-active');
+
+        confirmBtn.onclick = function () {
+            rejectAppointment(appointmentId);
+            modal.classList.remove('is-active');
+        };
+        cancelBtn.onclick = function () {
+            modal.classList.remove('is-active');
+        };
+
+        const closeModalBtn = modal.querySelector('.modal-close');
+        closeModalBtn.onclick = function () {
+            modal.classList.remove('is-active');
+        };
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.classList.remove('is-active');
+            }
+        };
+    }
+
+    function rejectAppointment(appointmentId) {
+        const data = new URLSearchParams();
+        data.append('appointmentId', appointmentId);
+        data.append('status', 'declined');
+
+        axios.post('./controller/changeAppointmentStatus.php', data)
+            .then(response => {
+                if (response.data.success) {
+                    alert('Appointment Cancelled!');
+                    fetchSchedules();
+                } else {
+                    alert('Failed to cancel the appointment!');
+                }
+            })
+            .catch(error => {
+                console.error('There was an error rejecting the appointment:', error);
+            });
+    }
+
     function approveAppointment(appointmentId) {
         const data = new URLSearchParams();
-        data.append('appointmentId', appointmentId); 
+        data.append('appointmentId', appointmentId);
+        data.append('status', 'approved');
 
         axios.post('./controller/changeAppointmentStatus.php', data)
             .then(response => {
                 if (response.data.success) {
                     alert('Appointment Approved!');
-                    fetchSchedules(); 
+                    fetchSchedules();
                 } else {
                     alert('Failed to approve the appointment!');
                 }
@@ -325,7 +438,7 @@
         axios.post('./controller/updateAppointment.php', formData)
             .then(response => {
                 alert('Appointment saved successfully');
-                console.log(response.data);
+                window.location.reload();                
             })
             .catch(error => {
                 console.error(error);
