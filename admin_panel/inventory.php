@@ -60,14 +60,86 @@
         margin: 5px;
     }
 </style>
+<!-- Product Upload Modal -->
+<div id="uploadProductModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Add Product</p>
+            <button class="delete" aria-label="close" onclick="closeModal()"></button>
+        </header>
+        <form action="./controller/uploadProducts.php" method="POST" enctype="multipart/form-data">
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">Product Name</label>
+                    <div class="control">
+                        <input class="input" type="text" name="product_name" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Product Image</label>
+                    <div class="file has-name is-fullwidth">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="product_image" required>
+                            <span class="file-cta">
+                                <span class="icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span>Choose a file…</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        <textarea class="textarea" name="description" required></textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Price</label>
+                    <div class="control">
+                        <input class="input" type="number" name="price" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Category</label>
+                    <div class="control">
+                        <input class="input" type="text" name="category" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Stock</label>
+                    <div class="control">
+                        <input class="input" type="number" name="stock" required>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" type="submit">Save</button>
+                <button class="button" type="button" onclick="closeModal()">Cancel</button>
+            </footer>
+        </form>
+    </div>
+</div>
+
 <section class="section">
     <div class="container">
         <div class="is-flex is-align-items-center is-justify-content-space-between">
             <h1 class="title">Products</h1>
             <div class="field has-addons">
                 <div class="control mr-6">
-                    <button id="editProducts" class="button is-small is-primary" onclick="editProducts()">Edit Products</button>
-                    <button id="saveProduct" class="button is-small is-primary" style="display: none;" onclick="saveProducts()">Save Products</button>
+                    <button id="editProducts" class="button is-small is-primary" onclick="editProducts()">Edit
+                        Products</button>
+                    <button id="saveProduct" class="button is-small is-primary" style="display: none;"
+                        onclick="saveProducts()">Save Products</button>
+                    <button class="button is-small is-primary" onclick="openModal()">Add Product</button>
+
                 </div>
                 <div class="control has-icons-left">
                     <input class="input is-small" id="searchInput" type="text" placeholder="Search">
@@ -92,27 +164,10 @@
                     </tr>
                 </thead>
                 <tbody class="has-text-centered" id="productsTableBody">
-                    <tr>
-                        <td>Colorado Bray</td>
-                        <td>
-                            <div class="image-container">
-                                <img src="./assets/images/logo.png" width="50px" height="50px" alt="">
-                                <div class="overlay-buttons">
-                                    <button class="button is-small is-info"><i class="fa-solid fa-upload"></i></button>
-                                    <button class="button is-small is-danger"><i class="fa-solid fa-x"></i></button>
-                                </div>
-                            </div>
-                        </td>
-                        <td>North-East Region</td>
-                        <td>$3.38</td>
-                        <td>FNJ76SDX3EW</td>
-                        <td>10</td>
-                        <td>
-                            <button class="toggle-button available" onclick="toggleStatus(this)">Available</button>
-                        </td>
-                    </tr>
+                    <!-- Data will be loaded here using AJAX -->
                 </tbody>
             </table>
+
         </div>
 
         <div class="mt-3">
@@ -183,5 +238,57 @@
             }
         }
     }
+
+    function fetchProducts() {
+        $.ajax({
+            url: "./controller/fetchProducts.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                let tableContent = "";
+                if (response.length > 0) {
+                    response.forEach(product => {
+                        let statusClass = product.status.toLowerCase() === "available" ? "available" : "unavailable";
+                        tableContent += `
+                                <tr>
+                                    <td>${product.product_name}</td>
+                                    <td>
+                                        <div class="image-container">
+                                            <img src="${product.image}" width="50px" height="50px" alt="Product Image">
+                                            <div class="overlay-buttons">
+                                                <button class="button is-small is-info"><i class="fa-solid fa-upload"></i></button>
+                                                <button class="button is-small is-danger"><i class="fa-solid fa-x"></i></button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${product.product_desc}</td>
+                                    <td>$${product.price}</td>
+                                    <td>${product.product_category}</td>
+                                    <td>${product.stock}</td>
+                                    <td>
+                                        <button class="toggle-button ${statusClass}" onclick="toggleStatus(this)">${product.status}</button>
+                                    </td>
+                                </tr>
+                            `;
+                    });
+                } else {
+                    tableContent = "<tr><td colspan='7'>No products found.</td></tr>";
+                }
+                $("#productsTableBody").html(tableContent);
+            },
+            error: function () {
+                $("#productsTableBody").html("<tr><td colspan='7'>Error fetching data.</td></tr>");
+            }
+        });
+    }
+    fetchProducts(); // Load products on page load
+
+        function openModal() {
+            document.getElementById("uploadProductModal").classList.add("is-active");
+        }
+
+        function closeModal() {
+            document.getElementById("uploadProductModal").classList.remove("is-active");
+        }
 </script>
 <?php include_once('./includes/footer.php'); ?>
