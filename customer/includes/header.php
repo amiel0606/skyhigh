@@ -193,6 +193,11 @@ $today = date(format: 'Y-m-d');
             padding: 2rem;
             text-align: center;
         }
+
+        .input {
+            background-color: #3CBC8D;
+            color: white;
+        }
     </style>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
