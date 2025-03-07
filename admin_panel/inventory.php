@@ -210,11 +210,10 @@
 
         for (let row of rows) {
             const cells = row.getElementsByTagName('td');
-            for (let i = 0; i < cells.length; i++) {
-                if (i === 1) {
-                    continue;
-                }
-                const cellContent = cells[i].textContent;
+            for (let i = 0; i < cells.length - 1; i++) { // Exclude last column (Status)
+                if (i === 1) continue; // Skip the image column
+
+                const cellContent = cells[i].textContent.trim();
                 cells[i].innerHTML = `<input type="text" value="${cellContent}" class="input is-small">`;
             }
         }
@@ -227,17 +226,44 @@
         const tableBody = document.getElementById('productsTableBody');
         const rows = tableBody.getElementsByTagName('tr');
 
+        let updatedProducts = [];
+
         for (let row of rows) {
             const cells = row.getElementsByTagName('td');
-            for (let i = 0; i < cells.length; i++) {
-                if (i === 1) {
-                    continue;
-                }
-                const inputField = cells[i].getElementsByTagName('input')[0];
-                cells[i].textContent = inputField.value;
-            }
+
+            let productData = {
+                name: cells[0].getElementsByTagName('input')[0].value,
+                description: cells[2].getElementsByTagName('input')[0].value,
+                price: cells[3].getElementsByTagName('input')[0].value.replace(/[₱,]/g, ''),
+                category: cells[4].getElementsByTagName('input')[0].value,
+                stock: cells[5].getElementsByTagName('input')[0].value,
+                id: row.dataset.productId 
+            };
+
+            updatedProducts.push(productData);
+
+            // Restore table content
+            cells[0].textContent = productData.name;
+            cells[2].textContent = productData.description;
+            cells[3].textContent = productData.price;
+            cells[4].textContent = productData.category;
+            cells[5].textContent = productData.stock;
         }
+
+        // Send data to server via AJAX
+        $.ajax({
+            url: "./controller/updateProducts.php",
+            type: "POST",
+            data: { products: JSON.stringify(updatedProducts) },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error updating products:", error);
+            }
+        });
     }
+
 
     function fetchProducts() {
         $.ajax({
@@ -250,7 +276,7 @@
                     response.forEach(product => {
                         let statusClass = product.status.toLowerCase() === "available" ? "available" : "unavailable";
                         tableContent += `
-                                <tr>
+                                <tr data-product-id="${product.product_id}"> >
                                     <td>${product.product_name}</td>
                                     <td>
                                         <div class="image-container">
@@ -262,7 +288,7 @@
                                         </div>
                                     </td>
                                     <td>${product.product_desc}</td>
-                                    <td>$${product.price}</td>
+                                    <td>₱${product.price}</td>
                                     <td>${product.product_category}</td>
                                     <td>${product.stock}</td>
                                     <td>
@@ -283,12 +309,12 @@
     }
     fetchProducts(); // Load products on page load
 
-        function openModal() {
-            document.getElementById("uploadProductModal").classList.add("is-active");
-        }
+    function openModal() {
+        document.getElementById("uploadProductModal").classList.add("is-active");
+    }
 
-        function closeModal() {
-            document.getElementById("uploadProductModal").classList.remove("is-active");
-        }
+    function closeModal() {
+        document.getElementById("uploadProductModal").classList.remove("is-active");
+    }
 </script>
 <?php include_once('./includes/footer.php'); ?>
