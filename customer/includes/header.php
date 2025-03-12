@@ -249,8 +249,8 @@ $today = date(format: 'Y-m-d');
 
     <div class="background-container">
         <div class="is-pulled-right m-3">
-            <button id="btnOrders" class="button is-warning is-pulled-right is-fullwidth">View Orders</button> <br> <br>
-            <button id="btnAppointments" class="button is-warning is-pulled-right">View Appointments</button>
+            <button id="btnOrders" class="button is-warning is-pulled-right is-fullwidth <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View Orders</button> <br> <br>
+            <button id="btnAppointments" class="button is-warning is-pulled-right <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View Appointments</button>
         </div>
         <div class="content">
             <div id="registerModal" class="modal">

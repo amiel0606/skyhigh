@@ -36,7 +36,7 @@ if (!isset($_SESSION['verified'])) {
     you wish with SkyHigh. We offer you a free inquiries, Make your appointment now.</p>
 <div class="container has-text-centered mt-5">
     <button class="button is-warning"
-        onclick="document.getElementById('appointmentModal').classList.add('is-active')">Set an Appointment</button>
+        onclick="document.getElementById('appointmentModal').classList.add('is-active')"><?php echo isset($_SESSION['uID']) ? 'Set an Appointment' : 'Set an Appointment as Guest'; ?></button>
 </div>
 
 <div id="appointmentModal" class="modal">

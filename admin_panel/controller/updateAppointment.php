@@ -17,21 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $service = mysqli_real_escape_string($conn, $_POST['service']);
     $time = mysqli_real_escape_string($conn, $_POST['time']);
     $date = mysqli_real_escape_string($conn, $_POST['date']);
-    
-    if (empty($appointmentId) || empty($name) || empty($username) || empty($address) || empty($contact) || empty($vehicle) || empty($service) || empty($time) || empty($date)) {
+    $reason = mysqli_real_escape_string($conn, $_POST['reason']);
+
+    if (empty($appointmentId) || empty($name) || empty($username) || empty($address) || empty($contact) || empty($vehicle) || empty($reason) || empty($service) || empty($time) || empty($date)) {
         echo json_encode(["status" => "error", "message" => "Please fill in all the fields."]);
         exit();
     }
 
     $sql = "UPDATE tbl_appointments 
-            SET name = ?, username = ?, address = ?, contact = ?, vehicle = ?, service = ?, time = ?, date = ?, status = 'Pending' 
+            SET name = ?, username = ?, address = ?, contact = ?, vehicle = ?, service = ?, time = ?, date = ?, status = 'Pending', cancellation_reason = ?
             WHERE a_id = ?";
 
     if ($stmt = mysqli_prepare($conn, $sql)) {
-        mysqli_stmt_bind_param($stmt, "ssssssssi", $name, $username, $address, $contact, $vehicle, $service, $time, $date, $appointmentId);
+        mysqli_stmt_bind_param($stmt, "sssssssssi", $name, $username, $address, $contact, $vehicle, $service, $time, $date, $reason, $appointmentId);
 
         if (mysqli_stmt_execute($stmt)) {
-            sendEmailNotification($username, $name, $service, $date, $time);
+            sendEmailNotification($username, $name, $service, $date, $time, $reason);
             echo json_encode(["status" => "success", "message" => "Appointment updated successfully."]);
         } else {
             echo json_encode(["status" => "error", "message" => "Failed to update the appointment."]);
@@ -48,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 
-function sendEmailNotification($username, $name, $service, $date, $time) {
+function sendEmailNotification($username, $name, $service, $date, $time, $reason) {
     $mail = new PHPMailer(true);
 
     try {
@@ -65,7 +66,7 @@ function sendEmailNotification($username, $name, $service, $date, $time) {
 
         $mail->isHTML(true);
         $mail->Subject = 'Your Appointment has been Rescheduled';
-        $mail->Body    = "Dear $name,<br><br>Your appointment has been rescheduled to <strong>$date</strong> at <strong>$time</strong> for the following service: <strong>$service</strong>.<br><br>If you have any questions, feel free to contact us.<br><br>Thank you for using our service.";
+        $mail->Body    = "Dear $name,<br><br>Your appointment has been rescheduled to <strong>$date</strong> at <strong>$time</strong> for the following service: <strong>$service</strong> for the following reason/s: $reason .<br><br>If you have any questions, feel free to contact us.<br><br>Thank you for using our service.";
 
         $mail->send();
     } catch (Exception $e) {

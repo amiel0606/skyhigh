@@ -20,16 +20,11 @@ include_once("./includes/header.php");
 
     </tbody>
 </table>
-<!-- Modal HTML (Bulma Style) -->
+
 <div id="appointmentModal" class="modal">
     <div class="modal-background"></div>
+    <div class="modal-close"></div>
     <div class="modal-content has-background-primary p-5">
-            <h1 class="title">Appointment Details</h1>
-            <p><strong>Vehicle:</strong> <span id="modal-vehicle"></span></p>
-            <p><strong>Service:</strong> <span id="modal-service"></span></p>
-            <p><strong>Date:</strong> <span id="modal-date"></span></p>
-            <p><strong>Time:</strong> <span id="modal-time"></span></p>
-            <p><strong>Status:</strong> <span id="modal-status"></span></p>
 
     </div>
 </div>
@@ -46,7 +41,6 @@ include_once("./includes/header.php");
                 const tableBody = document.querySelector('#appointmentsTable tbody');
                 response.data.forEach(appointment => {
                     const row = document.createElement('tr');
-
                     row.innerHTML = `
                     <td>${appointment.vehicle}</td>
                     <td>${appointment.service}</td>
@@ -67,20 +61,21 @@ include_once("./includes/header.php");
         });
 
     function showModal(appointment) {
-        document.getElementById('modal-vehicle').textContent = appointment.vehicle;
-        document.getElementById('modal-service').textContent = appointment.service;
-        document.getElementById('modal-date').textContent = appointment.date;
-        document.getElementById('modal-time').textContent = appointment.time;
-        document.getElementById('modal-status').textContent = appointment.status;
-
+        const modalContent = document.querySelector('.modal-content');
+        modalContent.innerHTML = `
+                <h1 class="title">Appointment Details</h1>
+                    <p><strong>Vehicle:</strong> <span id="modal-vehicle">${appointment.vehicle}</span></p>
+                    <p><strong>Service:</strong> <span id="modal-service">${appointment.service}</span></p>
+                    <p><strong>Date:</strong> <span id="modal-date">${appointment.date}</span></p>
+                    <p><strong>Time:</strong> <span id="modal-time">${appointment.time}</span></p>
+                    <p><strong>Status:</strong> <span id="modal-status">${appointment.status}</span></p>
+                    <button class="button is-warning" onclick="reschedAppointment(${appointment.id})">Reschedule</button>
+                    <br>
+                    <button class="button is-danger" onclick="cancelAppointment(${appointment.id})">Cancel</button>
+        `;
         const modal = document.getElementById('appointmentModal');
         modal.classList.add('is-active');
     }
-
-    document.getElementById('closeModal').addEventListener('click', function () {
-        const modal = document.getElementById('appointmentModal');
-        modal.classList.remove('is-active');
-    });
 
     document.querySelector('.modal-background').addEventListener('click', function () {
         const modal = document.getElementById('appointmentModal');

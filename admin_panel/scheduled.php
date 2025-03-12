@@ -29,17 +29,13 @@
         z-index: 1;
     }
 
-    /* Optional: Adjust modal size */
     .modal-content {
         width: 400px;
-        /* You can adjust the width as needed */
     }
 
-    /* Optional: Adjust button spacing */
     .buttons {
         justify-content: center;
         gap: 15px;
-        /* Space between the buttons */
     }
 </style>
 <section class="section">
@@ -149,6 +145,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="column">
                                 <h5 class="title is-5">Appointment Information</h5>
                                 <div class="field">
@@ -181,6 +178,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="field">
+                            <label class="label">Reason</label>
+                            <div class="control">
+                                <textarea rows="14" cols="96" id="appointmentReason" name="reason"
+                                    placeholder="Enter Reason"></textarea>
+                            </div>
+                        </div>
                         <p class="has-text-centered mt-3">Appointment Starts at 10:00 AM</p>
                         <div class="has-text-centered">
                             <button type="submit" class="button button-submit is-success">SAVE</button>
@@ -193,10 +197,10 @@
             <div class="modal-background"></div>
             <div class="modal-content">
                 <div class="box">
-                    <h4 class="title is-4">Are you sure?</h4>
-                    <p>Do you really want to cancel this appointment?</p>
+                    <h4 class="title is-4">Enter reason for cancellation</h4>
+                    <textarea id="cancelReason" cols="50" rows="10" name="" placeholder="Enter reason for cancellation..."></textarea>
                     <div class="buttons is-centered">
-                        <button id="confirmCancelBtn" class="button is-danger">Yes, cancel</button>
+                        <button id="confirmCancelBtn" class="button is-danger">Submit</button>
                         <button id="cancelModalBtn" class="button">No, keep it</button>
                     </div>
                 </div>
@@ -211,6 +215,7 @@
 <script src="../node_modules/axios/dist/axios.min.js"></script>
 
 <script>
+    let selectedAppointmentId = null;
     document.addEventListener("DOMContentLoaded", function () {
         fetchSchedules();
         let searchTimeout;
@@ -320,7 +325,6 @@
         }
     }
 
-
     function addApproveButtonEventListeners() {
         const approveButtons = document.querySelectorAll('.btn-accept');
         approveButtons.forEach(button => {
@@ -338,7 +342,7 @@
                 const appointmentId = this.id;
                 const appointmentStatus = this.dataset.status;
 
-                if (appointmentStatus === 'Confirmed') {
+                if (appointmentStatus === 'Confirmed' || appointmentStatus === 'Pending') {
                     showConfirmationModal(appointmentId);
                 } else {
                     rejectAppointment(appointmentId);
@@ -377,7 +381,7 @@
         const data = new URLSearchParams();
         data.append('appointmentId', appointmentId);
         data.append('status', 'declined');
-
+        data.append('reason', document.getElementById('cancelReason').value);
         axios.post('./controller/changeAppointmentStatus.php', data)
             .then(response => {
                 if (response.data.success) {
@@ -438,7 +442,7 @@
         axios.post('./controller/updateAppointment.php', formData)
             .then(response => {
                 alert('Appointment saved successfully');
-                window.location.reload();                
+                window.location.reload();
             })
             .catch(error => {
                 console.error(error);
