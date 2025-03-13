@@ -5,12 +5,12 @@ include_once('./postFunctions.php');
 header('Content-Type: application/json');
 $reason = $_POST['reason'] ?? null;
 
-if ($status === 'declined' && !$reason) {
+if ($status === 'Declined' && !$reason) {
     echo json_encode(['success' => false, 'message' => 'Reason is required for declining an appointment']);
     exit();
 }
 
-$result = ($status === 'approved') 
+$result = ($status === 'Confirmed') 
     ? approveAppointment($appointmentId) 
     : declineAppointment($appointmentId, $reason);
 

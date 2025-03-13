@@ -62,17 +62,25 @@ include_once("./includes/header.php");
 
     function showModal(appointment) {
         const modalContent = document.querySelector('.modal-content');
-        modalContent.innerHTML = `
-                <h1 class="title">Appointment Details</h1>
-                    <p><strong>Vehicle:</strong> <span id="modal-vehicle">${appointment.vehicle}</span></p>
-                    <p><strong>Service:</strong> <span id="modal-service">${appointment.service}</span></p>
-                    <p><strong>Date:</strong> <span id="modal-date">${appointment.date}</span></p>
-                    <p><strong>Time:</strong> <span id="modal-time">${appointment.time}</span></p>
-                    <p><strong>Status:</strong> <span id="modal-status">${appointment.status}</span></p>
-                    <button class="button is-warning" onclick="reschedAppointment(${appointment.id})">Reschedule</button>
-                    <br>
-                    <button class="button is-danger" onclick="cancelAppointment(${appointment.id})">Cancel</button>
+        let actionButtons = '';
+        if (appointment.status === 'Pending') {
+            actionButtons = `
+            <button class="button is-warning" onclick="reschedAppointment(${appointment.a_id})">Reschedule</button>
+            <br>
+            <button class="button is-danger" onclick="cancelAppointment(${appointment.a_id})">Cancel</button>
         `;
+        }
+
+        modalContent.innerHTML = `
+        <h1 class="title">Appointment Details</h1>
+        <p><strong>Vehicle:</strong> <span id="modal-vehicle">${appointment.vehicle}</span></p>
+        <p><strong>Service:</strong> <span id="modal-service">${appointment.service}</span></p>
+        <p><strong>Date:</strong> <span id="modal-date">${appointment.date}</span></p>
+        <p><strong>Time:</strong> <span id="modal-time">${appointment.time}</span></p>
+        <p><strong>Status:</strong> <span id="modal-status">${appointment.status}</span></p>
+        ${actionButtons} <!-- Only appears when status is 'Pending' -->
+    `;
+
         const modal = document.getElementById('appointmentModal');
         modal.classList.add('is-active');
     }
@@ -86,6 +94,66 @@ include_once("./includes/header.php");
         const modal = document.getElementById('appointmentModal');
         modal.classList.remove('is-active');
     });
+
+    function cancelAppointment(appointmentId) {
+        if (!document.getElementById("cancelModal")) {
+            const modalHtml = `
+            <div id="cancelModal" class="modal is-active">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Cancel Appointment</p>
+                        <button class="delete" aria-label="close" onclick="closeCancelModal()"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <label for="cancelReason">Reason for Cancellation:</label>
+                        <textarea id="cancelReason" class="textarea" placeholder="Enter reason"></textarea>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-danger" onclick="submitCancellation(${appointmentId})">Confirm</button>
+                        <button class="button" onclick="closeCancelModal()">Close</button>
+                    </footer>
+                </div>
+            </div>
+        `;
+            document.body.insertAdjacentHTML("beforeend", modalHtml);
+        }
+    }
+
+    function closeCancelModal() {
+        const modal = document.getElementById("cancelModal");
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    function submitCancellation(appointmentId) {
+        const reason = document.getElementById("cancelReason").value.trim();
+
+        if (!reason) {
+            alert("Please provide a reason for cancellation.");
+            return;
+        }
+
+        axios.post('./controllers/cancelAppointment.php', {
+            appointment_id: appointmentId,
+            cancellation_reason: reason
+        })
+            .then(response => {
+                alert("Appointment cancelled successfully.");
+                closeCancelModal();
+                window.location.reload();
+                const appointmentRow = document.getElementById(`appointment-${appointmentId}`);
+                if (appointmentRow) {
+                    appointmentRow.innerHTML = "<span class='tag is-danger'>Cancelled</span>";
+                }
+            })
+            .catch(error => {
+                console.error("Error cancelling appointment:", error);
+                alert("Failed to cancel appointment. Please try again.");
+            });
+    }
+
 
 </script>
 <?php
