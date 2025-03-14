@@ -4,8 +4,10 @@ include_once('./postFunctions.php');
 
 header('Content-Type: application/json');
 $reason = $_POST['reason'] ?? null;
+$status = $_POST['status'] ?? null;
+$appointmentId = $_POST['appointmentId'] ?? null;
 
-if ($status === 'Declined' && !$reason) {
+if ($status === 'declined' && !$reason) {
     echo json_encode(['success' => false, 'message' => 'Reason is required for declining an appointment']);
     exit();
 }
@@ -33,7 +35,7 @@ if (!in_array($status, $validStatuses)) {
     exit();
 }
 
-$result = ($status === 'approved') ? approveAppointment($appointmentId) : declineAppointment($appointmentId);
+$result = ($status === 'approved') ? approveAppointment($appointmentId) : declineAppointment($appointmentId, $reason);
 
 if ($result) {
     echo json_encode(['success' => true, 'message' => 'Appointment status updated successfully']);

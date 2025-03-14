@@ -30,7 +30,7 @@
         background-color: green;
     }
 
-    .not-available {
+    .unavailable {
         background-color: red;
     }
 
@@ -187,19 +187,43 @@
         </div>
     </div>
 </section>
+<script src="../node_modules/axios/dist/axios.min.js"></script>
 
 <script>
     function toggleStatus(button) {
-        if (button.classList.contains('available')) {
-            button.classList.remove('available');
-            button.classList.add('not-available');
-            button.textContent = 'Not Available';
-        } else {
-            button.classList.remove('not-available');
-            button.classList.add('available');
-            button.textContent = 'Available';
-        }
+        let productId = button.getAttribute("data-id");
+        let currentStatus = button.classList.contains('available') ? 'available' : 'unavailable';
+        let newStatus = currentStatus === 'available' ? 'unavailable' : 'available';
+
+        button.classList.toggle('available');
+        button.classList.toggle('unavailable');
+        button.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1); 
+
+        axios.post('./controller/updateStatus.php', {
+            product_id: productId,
+            status: newStatus
+        })
+            .then(response => {
+                if (!response.data.success) {
+                    alert("Failed to update product status.");
+                    console.error(response.data.message);
+                    button.classList.toggle('available');
+                    button.classList.toggle('unavailable');
+                    button.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+                } else {
+                    fetchProducts();
+                }
+            })
+            .catch(error => {
+                console.error("Error updating status:", error);
+                alert("Something went wrong!");
+                button.classList.toggle('available');
+                button.classList.toggle('unavailable');
+                button.textContent = currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1);
+            });
     }
+
+
 
     function editProducts() {
         document.getElementById('editProducts').style.display = 'none';
@@ -210,8 +234,8 @@
 
         for (let row of rows) {
             const cells = row.getElementsByTagName('td');
-            for (let i = 0; i < cells.length - 1; i++) { // Exclude last column (Status)
-                if (i === 1) continue; // Skip the image column
+            for (let i = 0; i < cells.length - 1; i++) {
+                if (i === 1) continue;
 
                 const cellContent = cells[i].textContent.trim();
                 cells[i].innerHTML = `<input type="text" value="${cellContent}" class="input is-small">`;
@@ -237,20 +261,16 @@
                 price: cells[3].getElementsByTagName('input')[0].value.replace(/[₱,]/g, ''),
                 category: cells[4].getElementsByTagName('input')[0].value,
                 stock: cells[5].getElementsByTagName('input')[0].value,
-                id: row.dataset.productId 
+                id: row.dataset.productId
             };
 
             updatedProducts.push(productData);
-
-            // Restore table content
             cells[0].textContent = productData.name;
             cells[2].textContent = productData.description;
             cells[3].textContent = productData.price;
             cells[4].textContent = productData.category;
             cells[5].textContent = productData.stock;
         }
-
-        // Send data to server via AJAX
         $.ajax({
             url: "./controller/updateProducts.php",
             type: "POST",
@@ -292,7 +312,7 @@
                                     <td>${product.product_category}</td>
                                     <td>${product.stock}</td>
                                     <td>
-                                        <button class="toggle-button ${statusClass}" onclick="toggleStatus(this)">${product.status}</button>
+                                        <button data-id="${product.product_id}" class="toggle-button ${statusClass}" onclick="toggleStatus(this)">${product.status}</button>
                                     </td>
                                 </tr>
                             `;
@@ -307,7 +327,7 @@
             }
         });
     }
-    fetchProducts(); // Load products on page load
+    fetchProducts();
 
     function openModal() {
         document.getElementById("uploadProductModal").classList.add("is-active");

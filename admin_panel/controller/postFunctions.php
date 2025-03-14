@@ -50,10 +50,10 @@ function declineAppointment($appointmentId, $reason)
         return $stmt->affected_rows;
     }
 
-    return 0;
+    return true;
 }
 
-function sendEmailNotification($username, $name, $status)
+function sendEmailNotification($username, $name, $status, $reason = '')
 {
     $mail = new PHPMailer(true);
 
@@ -71,7 +71,15 @@ function sendEmailNotification($username, $name, $status)
 
         $mail->isHTML(true);
         $mail->Subject = 'Your Appointment Status';
-        $mail->Body = "Dear $name,<br><br>Your appointment has been $status.<br><br>If you have any questions or concerns, feel free to contact us.<br><br>Thank you for using our service.";
+
+        $body = "Dear $name,<br><br>Your appointment has been $status.<br><br>";
+        if (!empty($reason)) {
+            $body .= "<strong>Reason:</strong> $reason<br><br>";
+        }
+
+        $body .= "If you have any questions or concerns, feel free to contact us.<br><br>Thank you for using our service.";
+
+        $mail->Body = $body;
 
         $mail->send();
     } catch (Exception $e) {

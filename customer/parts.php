@@ -147,6 +147,8 @@ include_once './includes/header.php';
                                     <div class="box product-item">
                                         <img src="../admin_panel/${product.image}" alt="Product" class="product-image">
                                         <p class="has-text-weight-bold">${product.product_name}</p>
+                                        <p class="has-text-weight-bold">${product.product_desc}</p>
+                                        <p class="has-text-weight-bold">Available Stocks: ${product.stock}</p>
                                     </div>
                                 </div>
                             `;

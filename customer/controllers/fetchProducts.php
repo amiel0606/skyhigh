@@ -1,6 +1,8 @@
 <?php
 include_once("../../admin_panel/controller/dbCon.php");
 
+$conn->query("UPDATE tbl_products SET status = 'unavailable' WHERE stock < 1");
+
 $categoriesQuery = "SELECT DISTINCT product_category FROM tbl_products";
 $categoriesResult = $conn->query($categoriesQuery);
 $categories = [];
