@@ -212,14 +212,24 @@ $today = date(format: 'Y-m-d');
                 </div>
             </a>
             <div class="d-flex ms-auto">
+                <!-- Sign Up and Log In Buttons (Hidden if Logged In) -->
                 <button class="bbtn btn-outline-light me-2 <?php echo isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>"
                     type="button" onclick="document.getElementById('registerModal').classList.add('is-active')">Sign
                     Up</button>
                 <button class="bbtn btn-light <?php echo isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>" type="button"
                     onclick="document.getElementById('loginModal').classList.add('is-active')">Log In</button>
+
+                <!-- Cart Button (Visible only if Logged In) -->
+                <button class="bbtn btn-outline-light me-2 <?php echo isset($_SESSION['uID']) ? '' : 'is-hidden'; ?>"
+                    type="button" onclick="window.location.href = 'userCart.php'">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </button>
+
+                <!-- Log Out Button (Visible only if Logged In) -->
                 <button class="bbtn btn-outline-light me-2 <?php echo isset($_SESSION['uID']) ? '' : 'is-hidden'; ?>"
                     type="button" onclick="window.location.href = './controllers/logout.php'">Log out</button>
             </div>
+
         </div>
     </nav>
     <nav class="navbar navbar-expand-lg bg-secondary">
@@ -249,8 +259,12 @@ $today = date(format: 'Y-m-d');
 
     <div class="background-container">
         <div class="is-pulled-right m-3">
-            <button id="btnOrders" class="button is-warning is-pulled-right is-fullwidth <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View Orders</button> <br> <br>
-            <button id="btnAppointments" class="button is-warning is-pulled-right <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View Appointments</button>
+            <button id="btnOrders"
+                class="button is-warning is-pulled-right is-fullwidth <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View
+                Orders</button> <br> <br>
+            <button id="btnAppointments"
+                class="button is-warning is-pulled-right <?php echo !isset($_SESSION['uID']) ? 'is-hidden' : ''; ?>">View
+                Appointments</button>
         </div>
         <div class="content">
             <div id="registerModal" class="modal">

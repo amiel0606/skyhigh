@@ -1,11 +1,6 @@
 <?php
 include_once("./includes/header.php");
 ?>
-<style>
-
-
-
-</style>
 <table id="appointmentsTable" class="table is-striped is-hoverable is-fullwidth">
     <thead>
         <tr>

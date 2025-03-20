@@ -105,6 +105,8 @@ include_once './includes/header.php';
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
     function toggleDropdown(id) {
         let dropdown = document.getElementById(id);
@@ -143,15 +145,18 @@ include_once './includes/header.php';
                     if (response.products.length > 0) {
                         response.products.forEach(product => {
                             productContainer += `
-                                <div class="column is-one-third">
-                                    <div class="box product-item">
-                                        <img src="../admin_panel/${product.image}" alt="Product" class="product-image">
-                                        <p class="has-text-weight-bold">${product.product_name}</p>
-                                        <p class="has-text-weight-bold">${product.product_desc}</p>
-                                        <p class="has-text-weight-bold">Available Stocks: ${product.stock}</p>
-                                    </div>
+                            <div class="column is-one-third">
+                                <div class="box product-item">
+                                    <img src="../admin_panel/${product.image}" alt="Product" class="product-image">
+                                    <p class="has-text-weight-bold">${product.product_name}</p>
+                                    <p class="has-text-weight-bold">${product.product_desc}</p>
+                                    <p class="has-text-weight-bold">Available Stocks: ${product.stock}</p>
+                                    <button class="button is-primary add-to-cart-btn" data-id="${product.product_id}" data-name="${product.product_name}" data-price="${product.price}">
+                                        Add to Cart
+                                    </button>
                                 </div>
-                            `;
+                            </div>
+                        `;
                         });
                     } else {
                         productContainer = "<p class='has-text-white'>No Products Available</p>";
@@ -163,9 +168,32 @@ include_once './includes/header.php';
                     $("#productContainer").html("<p class='has-text-white'>Error fetching products.</p>");
                 }
             });
+            $(document).on("click", ".add-to-cart-btn", function () {
+                let productId = $(this).data("id");
+                let productName = $(this).data("name");
+                let productPrice = $(this).data("price");
+
+                axios.post("./controllers/addToCart.php", {
+                    product_id: productId,
+                    product_name: productName,
+                    product_price: productPrice,
+                    quantity: 1 
+                })
+                    .then(response => {
+                        if (response.data.success) {
+                            alert("Added to cart successfully!");
+                        } else {
+                            alert("Failed to add to cart.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("Error adding to cart.");
+                    });
+            });
         }
 
-        fetchData(); 
+        fetchData();
     });
 
     function toggleDropdown(id) {
