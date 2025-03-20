@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 21, 2025 at 04:00 AM
+-- Generation Time: Mar 20, 2025 at 04:01 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -112,35 +112,6 @@ CREATE TABLE `order_details` (
   `quantity` int(11) NOT NULL,
   `price` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `product`
---
-
-CREATE TABLE `product` (
-  `product_id` int(11) NOT NULL,
-  `product_name` varchar(200) NOT NULL,
-  `product_desc` text NOT NULL,
-  `product_image` varchar(255) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `uploaded_date` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product`
---
-
-INSERT INTO `product` (`product_id`, `product_name`, `product_desc`, `product_image`, `price`, `category_id`, `uploaded_date`) VALUES
-(2, 'Wheel', 'Wheel ni lightning mcqueen', './uploads/wheel.png', 2000.00, 3, '2024-10-06 21:58:22'),
-(3, 'Muffler', 'Muffler ni lightning mcqueen', './uploads/muff.png', 5000.00, 2, '2024-10-06 21:58:51'),
-(4, 'isa pa', 'isa pa tong muffler', './uploads/wheel.png', 1313.00, 2, '2024-10-13 23:28:03'),
-(5, 'qsdqds', 'qweqdq', './uploads/muff.png', 123123.00, 2, '2024-10-14 00:37:58'),
-(6, 'qeeee', 'wed1', './uploads/wheel.png', 21331.00, 2, '2024-10-14 00:38:14'),
-(7, '12d12d', '3232321f', './uploads/muff.png', 12313.00, 2, '2024-10-14 00:38:32'),
-(8, 'dadadada', '3232321f', './uploads/muff.png', 12313.00, 3, '2024-10-14 22:19:04');
 
 -- --------------------------------------------------------
 
@@ -254,6 +225,73 @@ INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_carts`
+--
+
+CREATE TABLE `tbl_carts` (
+  `c_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `product_price` decimal(10,0) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_carts`
+--
+
+INSERT INTO `tbl_carts` (`c_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`) VALUES
+(4, 37, 2, 'Sample product', 23, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_products`
+--
+
+CREATE TABLE `tbl_products` (
+  `product_id` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `product_desc` varchar(255) NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  `product_category` varchar(255) NOT NULL,
+  `stock` int(11) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'available',
+  `image` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_products`
+--
+
+INSERT INTO `tbl_products` (`product_id`, `product_name`, `product_desc`, `price`, `product_category`, `stock`, `status`, `image`) VALUES
+(2, 'Sample product', 'Hahaha ferrari circus show', 23, 'Ferrari', 4, 'available', '67dc082511b097.52235573.png');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_transactions`
+--
+
+CREATE TABLE `tbl_transactions` (
+  `t_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `total` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_transactions`
+--
+
+INSERT INTO `tbl_transactions` (`t_id`, `user_id`, `date`, `total`) VALUES
+(1, 37, '2025-03-20', 46),
+(2, 37, '2025-03-20', 46);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_users`
 --
 
@@ -313,12 +351,6 @@ ALTER TABLE `order_details`
   ADD PRIMARY KEY (`detail_id`);
 
 --
--- Indexes for table `product`
---
-ALTER TABLE `product`
-  ADD PRIMARY KEY (`product_id`);
-
---
 -- Indexes for table `product_size_variation`
 --
 ALTER TABLE `product_size_variation`
@@ -347,6 +379,24 @@ ALTER TABLE `sizes`
 --
 ALTER TABLE `tbl_appointments`
   ADD PRIMARY KEY (`a_id`);
+
+--
+-- Indexes for table `tbl_carts`
+--
+ALTER TABLE `tbl_carts`
+  ADD PRIMARY KEY (`c_id`);
+
+--
+-- Indexes for table `tbl_products`
+--
+ALTER TABLE `tbl_products`
+  ADD PRIMARY KEY (`product_id`);
+
+--
+-- Indexes for table `tbl_transactions`
+--
+ALTER TABLE `tbl_transactions`
+  ADD PRIMARY KEY (`t_id`);
 
 --
 -- Indexes for table `tbl_users`
@@ -389,12 +439,6 @@ ALTER TABLE `order_details`
   MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `product`
---
-ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
 -- AUTO_INCREMENT for table `product_size_variation`
 --
 ALTER TABLE `product_size_variation`
@@ -423,6 +467,24 @@ ALTER TABLE `sizes`
 --
 ALTER TABLE `tbl_appointments`
   MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `tbl_carts`
+--
+ALTER TABLE `tbl_carts`
+  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `tbl_products`
+--
+ALTER TABLE `tbl_products`
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `tbl_transactions`
+--
+ALTER TABLE `tbl_transactions`
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
