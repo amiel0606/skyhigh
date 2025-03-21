@@ -107,36 +107,48 @@ include_once("./includes/header.php");
                     let totalPrice = document.getElementById("totalPrice");
                     cartItemsContainer.innerHTML = "";
 
+                    if (response.data.cartItems.length === 0) {
+                        cartItemsContainer.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="has-text-centered">No items in the cart yet.</td>
+                        </tr>
+                    `;
+                        totalPrice.innerText = "P 0";
+                        return;
+                    }
+
                     response.data.cartItems.forEach(item => {
                         cartItemsContainer.innerHTML += `
-                            <tr>
-                                <td>
-                                    <div class="is-flex is-align-items-center">
-                                        <figure class="image is-64x64 has-background-white p-1">
-                                            <img src="../admin_panel/uploads/${item.product_image}" class="cart-img" alt="Product">
-                                        </figure>
-                                        <span class="ml-2">${item.product_name}</span>
-                                    </div>
-                                </td>
-                                <td>P ${item.price}</td>
-                                <td>
-                                    <div class="buttons has-addons">
-                                        <button class="button is-small is-warning decrease" data-id="${item.product_id}">-</button>
-                                        <span class="px-2">${item.quantity}</span>
-                                        <button class="button is-small is-warning increase" data-id="${item.product_id}">+</button>
-                                    </div>
-                                </td>
-                                <td>P ${item.total_price}</td>
-                                <td>
-                                    <button class="button is-small is-danger delete-btn" data-id="${item.product_id}">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
+                        <tr>
+                            <td>
+                                <div class="is-flex is-align-items-center">
+                                    <figure class="image is-64x64 has-background-white p-1">
+                                        <img src="../admin_panel/uploads/${item.product_image}" class="cart-img" alt="Product">
+                                    </figure>
+                                    <span class="ml-2">${item.product_name}</span>
+                                </div>
+                            </td>
+                            <td>P ${item.price}</td>
+                            <td>
+                                <div class="buttons has-addons">
+                                    <button class="button is-small is-warning decrease" data-id="${item.product_id}">-</button>
+                                    <span class="px-2 quantity" data-id="${item.product_id}" data-stock="${item.stock}">${item.quantity}</span>
+                                    <button class="button is-small is-warning increase" data-id="${item.product_id}" ${item.quantity >= item.stock ? 'disabled' : ''}>+</button>
+                                </div>
+                            </td>
+                            <td>P ${item.total_price}</td>
+                            <td>
+                                <button class="button is-small is-danger delete-btn" data-id="${item.product_id}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                     });
 
                     totalPrice.innerText = `P ${response.data.totalPrice}`;
+
+                    addCartEventListeners();
                 }
             })
             .catch(error => {
@@ -144,17 +156,81 @@ include_once("./includes/header.php");
             });
     }
 
-    document.getElementById("finishOrderBtn").addEventListener("click", function() {
-    axios.post("./controllers/createPayment.php")
-        .then(response => {
-            if (response.data.success) {
-                window.location.href = response.data.redirect_url; // Redirect to GCash
-            } else {
-                alert("Payment initialization failed.");
-            }
+    function addCartEventListeners() {
+        document.querySelectorAll(".increase").forEach(button => {
+            button.addEventListener("click", () => {
+                let productId = button.dataset.id;
+                let quantityElement = document.querySelector(`.quantity[data-id="${productId}"]`);
+                let currentQuantity = parseInt(quantityElement.innerText);
+                let maxStock = parseInt(quantityElement.dataset.stock);
+
+                if (currentQuantity < maxStock) {
+                    updateCart(productId, "increase");
+                } else {
+                    alert("Cannot increase quantity. Stock limit reached!");
+                }
+            });
+        });
+
+        document.querySelectorAll(".decrease").forEach(button => {
+            button.addEventListener("click", () => {
+                updateCart(button.dataset.id, "decrease");
+            });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                deleteCartItem(button.dataset.id);
+            });
+        });
+    }
+
+    function updateCart(productId, action) {
+        axios.post('./controllers/updateCart.php', {
+            product_id: productId,
+            action: action
         })
-        .catch(error => console.error("Error:", error));
-});
+            .then(response => {
+                if (response.data.success) {
+                    fetchCartItems();
+                } else {
+                    console.error("Update failed:", response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error updating cart:", error);
+            });
+    }
+
+    function deleteCartItem(productId) {
+        axios.post('./controllers/updateCart.php', {
+            product_id: productId,
+            action: "delete"
+        })
+            .then(response => {
+                if (response.data.success) {
+                    fetchCartItems();
+                } else {
+                    console.error("Delete failed:", response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error deleting cart item:", error);
+            });
+    }
+
+    document.getElementById("finishOrderBtn").addEventListener("click", function () {
+        axios.post("./controllers/createPayment.php")
+            .then(response => {
+                if (response.data.success) {
+                    window.location.href = response.data.redirect_url; // Redirect to payment page
+                } else {
+                    alert("Payment initialization failed.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
+
     fetchCartItems();
 </script>
 

@@ -9,20 +9,26 @@ if (!isset($_SESSION['uID'])) {
 
 $user_id = $_SESSION['uID'];
 
-$sql = "SELECT c.product_id, p.product_name, p.price, p.image AS product_image, c.quantity, 
-               (p.price * c.quantity) AS total_price
-        FROM tbl_carts c
-        INNER JOIN tbl_products p ON c.product_id = p.product_id
+$sql = "SELECT c.product_id, c.quantity, c.product_price, p.stock, p.product_name, p.image 
+        FROM tbl_carts c 
+        JOIN tbl_products p ON c.product_id = p.product_id
         WHERE c.user_id = '$user_id'";
-
 $result = mysqli_query($conn, $sql);
 
 $cartItems = [];
 $totalPrice = 0;
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $totalPrice += $row['total_price'];
-    $cartItems[] = $row;
+    $cartItems[] = [
+        "product_id" => $row['product_id'],
+        "quantity" => $row['quantity'],
+        "price" => $row['product_price'],
+        "total_price" => $row['product_price'] * $row['quantity'],
+        "product_name" => $row['product_name'],
+        "product_image" => $row['image'],
+        "stock" => $row['stock']  // Include stock in the response
+    ];
+    $totalPrice += $row['product_price'] * $row['quantity'];
 }
 
 echo json_encode(["success" => true, "cartItems" => $cartItems, "totalPrice" => $totalPrice]);

@@ -10,21 +10,33 @@ if (!isset($_SESSION['uID'])) {
 $user_id = $_SESSION['uID'];
 $date = date("Y-m-d H:i:s");
 
-// Fetch total amount
+// Fetch user details from tbl_users
+$userQuery = "SELECT name, username, contact FROM tbl_users WHERE uID = '$user_id'";
+$userResult = mysqli_query($conn, $userQuery);
+
+if (!$userResult || mysqli_num_rows($userResult) == 0) {
+    echo json_encode(["success" => false, "message" => "User not found"]);
+    exit();
+}
+
+$userData = mysqli_fetch_assoc($userResult);
+$user_name = $userData['name'];
+$user_email = $userData['username'];
+$user_contact = $userData['contact'];
+
+// Fetch total cart price
 $sql = "SELECT SUM(product_price * quantity) AS total FROM tbl_carts WHERE user_id = '$user_id'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
-$totalPrice = $row['total'] * 100; // Convert to cents
+$totalPrice = $row['total'] * 100;
 
 if ($totalPrice <= 0) {
     echo json_encode(["success" => false, "message" => "No items in cart"]);
     exit();
 }
 
-// PayMongo API Key
 $secretKey = "sk_test_zAzfhKKa6mFrGinRP72REyut"; // Replace with your test key
 
-// 1️⃣ Create Payment Intent
 $intent_data = [
     "data" => [
         "attributes" => [
@@ -63,14 +75,15 @@ if (!isset($intent_result["data"]["id"])) {
 $payment_intent_id = $intent_result["data"]["id"];
 $client_key = $intent_result["data"]["attributes"]["client_key"];
 
-// 2️⃣ Create GCash Payment Method
+// Create payment method with dynamic user details
 $method_data = [
     "data" => [
         "attributes" => [
             "type" => "gcash",
             "billing" => [
-                "name" => "Test User", // Change this dynamically
-                "email" => "test@example.com" // Change this dynamically
+                "name" => $user_name,
+                "email" => $user_email,
+                "phone" => $user_contact // Adding contact number
             ]
         ]
     ]
@@ -105,7 +118,7 @@ $attach_data = [
         "attributes" => [
             "payment_method" => $payment_method_id,
             "client_key" => $client_key,
-            "return_url" => "https://yourwebsite.com/payment-success.php" // Change this!
+            "return_url" => "https://dev.skyhigh-moto.store/customer/controllers/finishOrder.php" 
         ]
     ]
 ];

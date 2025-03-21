@@ -31,15 +31,18 @@ if (mysqli_query($conn, $insertSql)) {
     foreach ($cartItems as $item) {
         $product_id = $item['product_id'];
         $quantity = $item['quantity'];
-        
+
         $updateStockSql = "UPDATE tbl_products SET stock = stock - $quantity WHERE product_id = '$product_id'";
         mysqli_query($conn, $updateStockSql);
     }
 
     mysqli_query($conn, "DELETE FROM tbl_carts WHERE user_id = '$user_id'");
 
-    echo "<h2>Payment Successful!</h2>";
-    echo "<p>Your order has been placed successfully.</p>";
+    echo "<script>window.location.href = '../userCart.php';
+    alert('Success Payment');
+    </script>";
+    exit();
+
 } else {
     echo "<h2>Error</h2><p>Failed to record transaction.</p>";
 }
