@@ -40,7 +40,7 @@
                             <span>View Scheduled</span>
                         </span>
                     </button>
-                    <button class="button is-danger is-fullwidth circle-button">
+                    <button id="btn-orders" class="button is-danger is-fullwidth circle-button">
                         <span class="icon-text">
                             <span class="icon">
                                 <i class="fa-solid fa-list"></i>
