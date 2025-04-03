@@ -195,8 +195,8 @@ $today = date(format: 'Y-m-d');
         }
 
         .input {
-            background-color: #3CBC8D;
-            color: white;
+            background-color: #fff;
+            color: black;
         }
     </style>
     <nav class="navbar navbar-expand-lg">
@@ -248,7 +248,7 @@ $today = date(format: 'Y-m-d');
                     <a class="nav-link" href="./about.php">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
+                    <a class="nav-link" href="./message.php">Contact</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./faq.php">FAQs</a>

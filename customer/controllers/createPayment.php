@@ -10,7 +10,6 @@ if (!isset($_SESSION['uID'])) {
 $user_id = $_SESSION['uID'];
 $date = date("Y-m-d H:i:s");
 
-// Fetch user details from tbl_users
 $userQuery = "SELECT name, username, contact FROM tbl_users WHERE uID = '$user_id'";
 $userResult = mysqli_query($conn, $userQuery);
 
@@ -24,7 +23,6 @@ $user_name = $userData['name'];
 $user_email = $userData['username'];
 $user_contact = $userData['contact'];
 
-// Fetch total cart price
 $sql = "SELECT SUM(product_price * quantity) AS total FROM tbl_carts WHERE user_id = '$user_id'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
@@ -35,7 +33,7 @@ if ($totalPrice <= 0) {
     exit();
 }
 
-$secretKey = "sk_test_zAzfhKKa6mFrGinRP72REyut"; // Replace with your test key
+$secretKey = "sk_test_zAzfhKKa6mFrGinRP72REyut"; 
 
 $intent_data = [
     "data" => [
@@ -75,7 +73,16 @@ if (!isset($intent_result["data"]["id"])) {
 $payment_intent_id = $intent_result["data"]["id"];
 $client_key = $intent_result["data"]["attributes"]["client_key"];
 
-// Create payment method with dynamic user details
+$transactionUuid = uniqid('txn_', true);  
+$insertTransactionSql = "INSERT INTO tbl_transactions (user_id, total, uuid, payment_intent_id) 
+                         VALUES ('$user_id', '$totalPrice', '$transactionUuid', '$payment_intent_id')";
+
+if (mysqli_query($conn, $insertTransactionSql)) {
+} else {
+    echo json_encode(["success" => false, "message" => "Failed to insert transaction into database", "error" => mysqli_error($conn)]);
+    exit();
+}
+
 $method_data = [
     "data" => [
         "attributes" => [
@@ -83,7 +90,7 @@ $method_data = [
             "billing" => [
                 "name" => $user_name,
                 "email" => $user_email,
-                "phone" => $user_contact // Adding contact number
+                "phone" => $user_contact 
             ]
         ]
     ]
@@ -118,7 +125,7 @@ $attach_data = [
         "attributes" => [
             "payment_method" => $payment_method_id,
             "client_key" => $client_key,
-            "return_url" => "https://dev.skyhigh-moto.store/customer/controllers/finishOrder.php" 
+            "return_url" => "http://localhost/skyhigh/customer/controllers/finishOrder.php" 
         ]
     ]
 ];
@@ -143,7 +150,8 @@ $attach_result = json_decode($attach_response, true);
 if (isset($attach_result["data"]["attributes"]["next_action"]["redirect"]["url"])) {
     echo json_encode([
         "success" => true,
-        "redirect_url" => $attach_result["data"]["attributes"]["next_action"]["redirect"]["url"]
+        "redirect_url" => $attach_result["data"]["attributes"]["next_action"]["redirect"]["url"],
+        "payment_intent_id" => $payment_intent_id
     ]);
 } else {
     echo json_encode([

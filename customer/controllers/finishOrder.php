@@ -8,6 +8,8 @@ if (!isset($_SESSION['uID'])) {
 }
 
 $user_id = $_SESSION['uID'];
+$username = $_SESSION['username'];
+
 $date = date("Y-m-d H:i:s");
 
 $sql = "SELECT product_id, quantity, product_price FROM tbl_carts WHERE user_id = '$user_id'";
@@ -26,7 +28,7 @@ if ($totalPrice <= 0) {
     exit();
 }
 
-$insertSql = "INSERT INTO tbl_transactions (user_id, date, total) VALUES ('$user_id', '$date', '$totalPrice')";
+$insertSql = "INSERT INTO tbl_transactions (user_id, total) VALUES ('$username', '$totalPrice')";
 if (mysqli_query($conn, $insertSql)) {
     foreach ($cartItems as $item) {
         $product_id = $item['product_id'];

@@ -27,8 +27,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Address</th>
-                        <th>Orders</th>
+                        <th>Total</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -37,7 +36,6 @@
                 <tbody id="orderTableBody">
                 </tbody>
             </table>
-
         </div>
 
         <div class="mt-3">
@@ -56,12 +54,78 @@
                 </span>
             </button>
         </div>
-    
+
         <div id="loading" style="display: none;">
             <span>Loading...</span>
         </div>
     </div>
 </section>
 <script src="../node_modules/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetchPayments();
+    });
+
+    function fetchPayments() {
+        let url = './controller/getPayments.php';
+
+        const today = new Date();
+        const currentDate = today.toISOString().split('T')[0];
+
+        const startDate = '2025-01-27';
+
+        axios.get(url)
+            .then(response => {
+                let payments = response.data.payments;
+
+                payments = payments.filter(payment => {
+                    const paymentDate = new Date(payment.date).toISOString().split('T')[0];
+                    return paymentDate >= startDate && paymentDate <= currentDate;
+                });
+
+                let tableBody = document.getElementById("orderTableBody");
+                tableBody.innerHTML = "";
+
+                payments.forEach(payment => {
+                    let payment_intent_id = payment.payment_intent_id;
+                    let row = `<tr>
+                        <td>${payment.name || 'N/A'}</td>
+                        <td>${payment.username || 'N/A'}</td>
+                        <td>${(payment.total / 100).toFixed(2)} PHP</td>
+                        <td>${new Date(payment.date).toLocaleString()}</td>
+                        <td>${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</td>
+                        <td>
+                            <button class="button is-small is-warning" title="Preparing Order" onclick="updateStatus('${payment_intent_id}', 'Preparing')">
+                                <span class="icon"><i class="fas fa-cogs"></i></span>
+                            </button>
+                            <button class="button is-small is-success" title="Ready for Pickup" onclick="updateStatus('${payment_intent_id}', 'Ready for Pickup')">
+                                <span class="icon"><i class="fas fa-check-circle"></i></span>
+                            </button>
+                        </td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching payments:", error);
+                document.getElementById("loading").innerHTML = `<span style="color:red;">Failed to fetch payments</span>`;
+            });
+    }
+
+    function updateStatus(payment_intent_id, status) {
+        axios.post('./controller/changeTransactionStatus.php', {
+            payment_intent_id: payment_intent_id,
+            status: status
+        })
+            .then(function (response) {
+                console.log(response.data);
+                alert(response.data.message);
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert("Error updating the status.");
+            });
+    }
+</script>
 
 <?php include_once('./includes/footer.php'); ?>

@@ -53,6 +53,17 @@ function declineAppointment($appointmentId, $reason)
     return true;
 }
 
+function updateOrder($id, $status) {
+    global $conn;
+    $sql = "UPDATE tbl_transactions SET status = ? WHERE t_id = ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $status, $id);
+    $stmt->execute();
+
+    return $stmt->affected_rows;
+}
+
 function sendEmailNotification($username, $name, $status, $reason = '')
 {
     $mail = new PHPMailer(true);
