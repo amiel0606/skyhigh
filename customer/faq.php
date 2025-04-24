@@ -49,6 +49,7 @@ is-size-5 has-text-weight-medium">
     </div>
 </div>
 
+<script src="./js/changeWindows.js"></script>
 
 <?php
 include_once './includes/footer.php';

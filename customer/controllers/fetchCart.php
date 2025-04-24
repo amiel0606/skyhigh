@@ -12,7 +12,7 @@ $user_id = $_SESSION['uID'];
 $sql = "SELECT c.product_id, c.quantity, c.product_price, p.stock, p.product_name, p.image 
         FROM tbl_carts c 
         JOIN tbl_products p ON c.product_id = p.product_id
-        WHERE c.user_id = '$user_id'";
+        WHERE c.user_id = '$user_id' AND c.status != 'Paid'";
 $result = mysqli_query($conn, $sql);
 
 $cartItems = [];
@@ -26,7 +26,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         "total_price" => $row['product_price'] * $row['quantity'],
         "product_name" => $row['product_name'],
         "product_image" => $row['image'],
-        "stock" => $row['stock']  // Include stock in the response
+        "stock" => $row['stock']  
     ];
     $totalPrice += $row['product_price'] * $row['quantity'];
 }

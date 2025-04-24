@@ -24,6 +24,7 @@ include_once './includes/header.php';
 
     <span class="ml-6 is-italic is-size-4">Keep your bike running strong—because every ride matters!</span> 
 </p>
+<script src="./js/changeWindows.js"></script>
 
 <?php
 include_once './includes/footer.php';

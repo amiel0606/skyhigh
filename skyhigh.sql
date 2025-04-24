@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2025 at 04:01 PM
+-- Generation Time: Apr 04, 2025 at 07:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -214,14 +214,6 @@ CREATE TABLE `tbl_appointments` (
   `status` varchar(255) NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `tbl_appointments`
---
-
-INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`, `vehicle`, `service`, `date`, `time`, `status`) VALUES
-(12, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'Imus, 80bucks', '09940576891', 'haha', 'sss', '2025-02-14', '13:32', 'Confirmed'),
-(13, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'Imus, 80bucks', '09940576891', 'ehehezzxc', 'heheh', '2025-02-21', '10:27', 'Pending');
-
 -- --------------------------------------------------------
 
 --
@@ -236,13 +228,6 @@ CREATE TABLE `tbl_carts` (
   `product_price` decimal(10,0) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_carts`
---
-
-INSERT INTO `tbl_carts` (`c_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`) VALUES
-(4, 37, 2, 'Sample product', 23, 1);
 
 -- --------------------------------------------------------
 
@@ -266,7 +251,7 @@ CREATE TABLE `tbl_products` (
 --
 
 INSERT INTO `tbl_products` (`product_id`, `product_name`, `product_desc`, `price`, `product_category`, `stock`, `status`, `image`) VALUES
-(2, 'Sample product', 'Hahaha ferrari circus show', 23, 'Ferrari', 4, 'available', '67dc082511b097.52235573.png');
+(2, 'Sample product', 'Hahaha ferrari circus show', 23, 'Ferrari', 0, 'available', '67dc082511b097.52235573.png');
 
 -- --------------------------------------------------------
 
@@ -277,17 +262,12 @@ INSERT INTO `tbl_products` (`product_id`, `product_name`, `product_desc`, `price
 CREATE TABLE `tbl_transactions` (
   `t_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `date` date NOT NULL,
-  `total` decimal(10,0) NOT NULL
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `total` decimal(10,0) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'Paid',
+  `uuid` varchar(255) NOT NULL,
+  `payment_intent_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_transactions`
---
-
-INSERT INTO `tbl_transactions` (`t_id`, `user_id`, `date`, `total`) VALUES
-(1, 37, '2025-03-20', 46),
-(2, 37, '2025-03-20', 46);
 
 -- --------------------------------------------------------
 
@@ -472,7 +452,7 @@ ALTER TABLE `tbl_appointments`
 -- AUTO_INCREMENT for table `tbl_carts`
 --
 ALTER TABLE `tbl_carts`
-  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbl_products`
@@ -484,7 +464,7 @@ ALTER TABLE `tbl_products`
 -- AUTO_INCREMENT for table `tbl_transactions`
 --
 ALTER TABLE `tbl_transactions`
-  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`

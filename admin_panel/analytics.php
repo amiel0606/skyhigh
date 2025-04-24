@@ -33,6 +33,8 @@
 
             updateAppointmentsChart(appointmentsData);
             updateRevenueChart(revenueData);
+            console.log('Value of revenueData:', responseRevenue.data);
+
         } catch (error) {
             console.error('Error fetching data', error);
         }

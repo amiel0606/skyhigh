@@ -2,11 +2,6 @@
 include_once './includes/header.php';
 ?>
 <style>
-    .content {
-        width: 1900px;
-        height: 100vh;
-    }
-
     .sidebar {
         background-color: #6A8DAF;
         width: 250px;
@@ -32,6 +27,8 @@ include_once './includes/header.php';
 
     .content {
         margin: 0;
+        width: 1700px;
+        height: 100vh !important;
     }
 
     .list-item a {
@@ -47,15 +44,24 @@ include_once './includes/header.php';
     }
 
     .product-container {
-        max-height: 700;
+        height: calc(100vh - 100px);
+        /* Adjust if header size is different */
         overflow-y: auto;
         overflow-x: hidden;
         padding: 20px;
         border-radius: 10px;
-        white-space: normal;
         display: flex;
         justify-content: center;
-        margin-top: -100px;
+        align-items: flex-start;
+    }
+
+    #productContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 1000px;
     }
 
     .product-grid {
@@ -73,6 +79,11 @@ include_once './includes/header.php';
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         cursor: pointer;
         width: 250px;
+        height: 380px;
+        /* fixed height for uniformity */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .product-item:hover {
@@ -81,9 +92,17 @@ include_once './includes/header.php';
     }
 
     .product-image {
-        max-width: 100%;
-        height: auto;
+        width: 100%;
+        height: 150px;
+        /* fixed height */
+        object-fit: cover;
         border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .product-item p {
+        margin-bottom: 8px;
+        font-size: 14px;
     }
 </style>
 
@@ -105,6 +124,8 @@ include_once './includes/header.php';
         </div>
     </div>
 </div>
+<script src="./js/changeWindows.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
@@ -116,28 +137,88 @@ include_once './includes/header.php';
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        function fetchData() {
+        // Add notification container to the page
+        $('body').append('<div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>');
+        
+        function showNotification(notification) {
+            const { type, title, message } = notification;
+            const notificationId = 'notification-' + Date.now();
+            
+            let notificationClass = 'notification is-light';
+            let iconClass = 'fas fa-info-circle';
+            
+            if (type === 'success') {
+                notificationClass += ' is-success';
+                iconClass = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                notificationClass += ' is-danger';
+                iconClass = 'fas fa-exclamation-circle';
+            } else if (type === 'warning') {
+                notificationClass += ' is-warning';
+                iconClass = 'fas fa-exclamation-triangle';
+            }
+            
+            const notificationHtml = `
+                <div id="${notificationId}" class="${notificationClass}">
+                    <button class="delete"></button>
+                    <div class="is-flex is-align-items-center">
+                        <span class="icon mr-2">
+                            <i class="${iconClass}"></i>
+                        </span>
+                        <div>
+                            <p class="has-text-weight-bold">${title}</p>
+                            <p>${message}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            $('#notification-container').append(notificationHtml);
+            
+            // Add click event to close button
+            $(`#${notificationId} .delete`).on('click', function() {
+                $(`#${notificationId}`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+            });
+            
+            // Auto-remove after 5 seconds
+            setTimeout(function() {
+                $(`#${notificationId}`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+        
+        function fetchData(category = '') {
             $.ajax({
-                url: "./controllers/fetchProducts.php",
+                url: category ? `./controllers/fetchProductsByCategory.php?category=${encodeURIComponent(category)}` : "./controllers/fetchProductsByCategory.php",
                 type: "GET",
                 dataType: "json",
                 success: function (response) {
                     let categoryMenu = "";
+                    
+                    // Add "All Categories" option
+                    categoryMenu += `
+                        <p class="menu-label has-text-white">
+                            <a class="has-text-white category-link" data-category="">All Categories</a>
+                        </p>
+                    `;
+                    
                     if (response.categories.length > 0) {
                         response.categories.forEach(category => {
-                            let categoryId = category.toLowerCase().replace(/\s+/g, '-') + "-dropdown";
-                            categoryMenu += `
-                                <p class="menu-label has-text-white">
-                                    <a class="has-text-white">${category} </a>
-                                </p>
-                                <ul id="${categoryId}" class="menu-list is-hidden">
-                                    <li class="list-item"><a href="#">Option 1</a></li>
-                                    <li class="list-item"><a href="#">Option 2</a></li>
-                                </ul>
-                            `;
+                            // Only show categories that have products
+                            if (category.count > 0) {
+                                let categoryId = category.name.toLowerCase().replace(/\s+/g, '-');
+                                categoryMenu += `
+                                    <p class="menu-label has-text-white">
+                                        <a class="has-text-white category-link" data-category="${category.name}">${category.name} (${category.count})</a>
+                                    </p>
+                                `;
+                            }
                         });
                     } else {
-                        categoryMenu = "<p class='menu-label has-text-white'>No Categories Found</p>";
+                        categoryMenu += "<p class='menu-label has-text-white'>No Categories Found</p>";
                     }
                     $("#categoryMenu").html(categoryMenu);
 
@@ -162,43 +243,83 @@ include_once './includes/header.php';
                         productContainer = "<p class='has-text-white'>No Products Available</p>";
                     }
                     $("#productContainer").html(productContainer);
+                    
+                    // Highlight the selected category
+                    if (category) {
+                        $(`.category-link[data-category="${category}"]`).addClass("has-background-primary");
+                    } else {
+                        $(".category-link[data-category='']").addClass("has-background-primary");
+                    }
                 },
                 error: function () {
                     $("#categoryMenu").html("<p class='menu-label has-text-white'>Error fetching categories.</p>");
                     $("#productContainer").html("<p class='has-text-white'>Error fetching products.</p>");
                 }
             });
-            $(document).on("click", ".add-to-cart-btn", function () {
-                let productId = $(this).data("id");
-                let productName = $(this).data("name");
-                let productPrice = $(this).data("price");
-
-                axios.post("./controllers/addToCart.php", {
-                    product_id: productId,
-                    product_name: productName,
-                    product_price: productPrice,
-                    quantity: 1 
-                })
-                    .then(response => {
-                        if (response.data.success) {
-                            alert("Added to cart successfully!");
-                        } else {
-                            alert("Failed to add to cart.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        alert("Error adding to cart.");
-                    });
-            });
         }
 
+        // Initial load
         fetchData();
-    });
 
-    function toggleDropdown(id) {
-        $("#" + id).toggleClass("is-hidden");
-    }
+        // Handle category click
+        $(document).on("click", ".category-link", function() {
+            const category = $(this).data("category");
+            
+            // Highlight selected category
+            $(".category-link").removeClass("has-background-primary");
+            $(this).addClass("has-background-primary");
+            
+            // Fetch products for this category
+            fetchData(category);
+        });
+
+        // Handle add to cart
+        $(document).on("click", ".add-to-cart-btn", function () {
+            let productId = $(this).data("id");
+            let productName = $(this).data("name");
+            let productPrice = $(this).data("price");
+
+            axios.post("./controllers/addToCart.php", {
+                product_id: productId,
+                product_name: productName,
+                product_price: productPrice,
+                quantity: 1
+            })
+                .then(response => {
+                    if (response.data.success) {
+                        // Show success notification
+                        if (response.data.notification) {
+                            showNotification(response.data.notification);
+                        }
+                    } else {
+                        // Check if login is required
+                        if (response.data.requireLogin) {
+                            // Show login modal
+                            var login = document.getElementById('loginModal');
+                            if (login) {
+                                login.classList.add('is-active');
+                            } else {
+                                // If login modal doesn't exist, redirect to login page
+                                window.location.href = './login.php';
+                            }
+                        }
+                        
+                        // Show error notification
+                        if (response.data.notification) {
+                            showNotification(response.data.notification);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showNotification({
+                        type: 'error',
+                        title: 'Error',
+                        message: 'Failed to add to cart. Please try again.'
+                    });
+                });
+        });
+    });
 </script>
 
 <?php

@@ -239,10 +239,7 @@ $today = date(format: 'Y-m-d');
                     <a class="nav-link" href="./parts.php">Parts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Inquire</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Services</a>
+                    <a class="nav-link" href="./message.php">Inquire</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./about.php">About</a>

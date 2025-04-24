@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($input['payment_intent_id'], 
     $transactionId = $input['payment_intent_id'];
     $status = $input['status'];
 
-    // Fetch user email
     $sql = "SELECT t.user_id, u.username, u.name 
             FROM tbl_transactions t 
             INNER JOIN tbl_users u ON t.user_id = u.uID 

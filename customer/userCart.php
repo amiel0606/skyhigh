@@ -96,6 +96,7 @@ include_once("./includes/header.php");
     <p class="has-text-white">Total: <span id="totalPrice" class="has-text-weight-bold">P 0</span></p>
     <button class="button is-warning is-fullwidth mt-3" id="finishOrderBtn">Finish Order</button>
 </div>
+<script src="./js/changeWindows.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -118,6 +119,9 @@ include_once("./includes/header.php");
                     }
 
                     response.data.cartItems.forEach(item => {
+                        // Check if quantity is less than stock
+                        const canIncrease = parseInt(item.quantity) < parseInt(item.stock);
+                        
                         cartItemsContainer.innerHTML += `
                         <tr>
                             <td>
@@ -133,8 +137,9 @@ include_once("./includes/header.php");
                                 <div class="buttons has-addons">
                                     <button class="button is-small is-warning decrease" data-id="${item.product_id}">-</button>
                                     <span class="px-2 quantity" data-id="${item.product_id}" data-stock="${item.stock}">${item.quantity}</span>
-                                    <button class="button is-small is-warning increase" data-id="${item.product_id}" ${item.quantity >= item.stock ? 'disabled' : ''}>+</button>
+                                    <button class="button is-small is-warning increase" data-id="${item.product_id}" ${!canIncrease ? 'disabled' : ''}>+</button>
                                 </div>
+                                ${!canIncrease ? '<small class="has-text-danger">Stock limit reached</small>' : ''}
                             </td>
                             <td>P ${item.total_price}</td>
                             <td>
@@ -195,10 +200,12 @@ include_once("./includes/header.php");
                     fetchCartItems();
                 } else {
                     console.error("Update failed:", response.data.message);
+                    alert(response.data.message || "Failed to update cart.");
                 }
             })
             .catch(error => {
                 console.error("Error updating cart:", error);
+                alert("Error updating cart. Please try again.");
             });
     }
 
@@ -212,10 +219,12 @@ include_once("./includes/header.php");
                     fetchCartItems();
                 } else {
                     console.error("Delete failed:", response.data.message);
+                    alert(response.data.message || "Failed to delete item.");
                 }
             })
             .catch(error => {
                 console.error("Error deleting cart item:", error);
+                alert("Error deleting item. Please try again.");
             });
     }
 

@@ -25,7 +25,7 @@
                     </p>
                 </div>
                 <div class="buttons mt-auto">
-                    <button class="button is-danger is-fullwidth circle-button">
+                    <button id="btn-analytics" class="button is-danger is-fullwidth circle-button">
                         <span class="icon-text">
                             <span class="icon">
                                 <i class="fa-solid fa-chart-line"></i> </span>
@@ -48,7 +48,7 @@
                             <span>View Orders</span>
                         </span>
                     </button>
-                    <button class="button is-danger is-fullwidth circle-button">
+                    <button id="btn-chat" class="button is-danger is-fullwidth circle-button">
                         <span class="icon-text">
                             <span class="icon">
                                 <i class="fa-solid fa-comments"></i>

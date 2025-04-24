@@ -33,7 +33,7 @@ if ($totalPrice <= 0) {
     exit();
 }
 
-$secretKey = "sk_test_zAzfhKKa6mFrGinRP72REyut"; 
+$secretKey = "sk_test_zAzfhKKa6mFrGinRP72REyut";
 
 $intent_data = [
     "data" => [
@@ -73,7 +73,7 @@ if (!isset($intent_result["data"]["id"])) {
 $payment_intent_id = $intent_result["data"]["id"];
 $client_key = $intent_result["data"]["attributes"]["client_key"];
 
-$transactionUuid = uniqid('txn_', true);  
+$transactionUuid = uniqid('txn_', true);
 $insertTransactionSql = "INSERT INTO tbl_transactions (user_id, total, uuid, payment_intent_id) 
                          VALUES ('$user_id', '$totalPrice', '$transactionUuid', '$payment_intent_id')";
 
@@ -90,7 +90,7 @@ $method_data = [
             "billing" => [
                 "name" => $user_name,
                 "email" => $user_email,
-                "phone" => $user_contact 
+                "phone" => $user_contact
             ]
         ]
     ]
@@ -125,7 +125,7 @@ $attach_data = [
         "attributes" => [
             "payment_method" => $payment_method_id,
             "client_key" => $client_key,
-            "return_url" => "http://localhost/skyhigh/customer/controllers/finishOrder.php" 
+            "return_url" => "http://localhost/skyhigh/customer/controllers/finishOrder.php?payment_intent_id=$payment_intent_id"
         ]
     ]
 ];

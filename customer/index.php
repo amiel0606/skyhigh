@@ -30,6 +30,12 @@ if (!isset($_SESSION['verified'])) {
     .is-secondary {
         color: #262f36;
     }
+
+
+    .input {
+        background-color: #fff;
+        color: black;
+    }
 </style>
 <p class="logo-text-motorcycle is-size-3 text-center">Just Ride & Go with SkyHigh.</p>
 <p class="text text-center">How is your ride today, Sounds like not good! Don’t worry. Find your mechanic online Book as

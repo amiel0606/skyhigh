@@ -24,6 +24,7 @@ include_once("./includes/header.php");
     </div>
 </div>
 
+<script src="./js/changeWindows.js"></script>
 
 <script src="../node_modules/axios/dist/axios.min.js"></script>
 
