@@ -115,6 +115,21 @@ function getRevenueByMonth()
     return $revenue;
 }
 
+function getActiveUsers()
+{
+    global $conn;
+    $sql = "SELECT COUNT(DISTINCT u.uID) AS active_users 
+            FROM tbl_appointments a
+            JOIN tbl_users u ON a.username = u.username
+            WHERE u.uID IN (
+                SELECT DISTINCT user_id FROM tbl_carts
+                UNION
+                SELECT DISTINCT user_id FROM tbl_transactions
+            )";
+    $result = $conn->query($sql);
+    return $result->fetch_assoc()['active_users'];
+}
+
 function closeConnection()
 {
     global $conn;

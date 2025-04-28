@@ -1,4 +1,5 @@
 <?php include_once('./includes/header.php'); ?>
+<?php include './includes/notification.php'; ?>
 <div class="main-content">
     <section class="hero is-small"
         style="background: url('./assets/images/banner1.png') center/cover; padding: 100px; color: white;">
@@ -8,20 +9,17 @@
     <div class="columns">
         <div class="column is-three-quarters">
             <div class="dashboard-card mt-6"> <i class="fa-solid fa-users fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Active Users: </span> </div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Active Users: <span id="total_active_users"></span> </span></div>
             <div class="dashboard-card"> <i class="fa-solid fa-wrench fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Active Mechanics: </span></div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Appointments: <span id="total_appointments"></span> </span></div>
             <div class="dashboard-card"> <i class="fa-solid fa-gear fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Items Sales: </span></div>
-            <div class="dashboard-card"><span class="is-size-4 has-text-weight-bold ml-3"> Upcoming Appointments:
-                </span></div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Items Sales: <span id="total_sales"></span> </span></div>
         </div>
         <div class="column">
             <div class="dashboard-card full-height d-flex flex-column mt-6">
                 <div class="content">
                     <p class="title has-text-weight-bold mb-6">Weekly Appointments Scheduled: <br>
-                        <span class="is-size-1">  50</span></p>
-                    <p class="title has-text-weight-bold mt-6">Weekly New Users: <span class="is-size-1">50</span>
+                        <span id="weekly_appointments" class="is-size-1 has-text-centered "></span>
                     </p>
                 </div>
                 <div class="buttons mt-auto">
@@ -62,5 +60,42 @@
     </div>
 </div>
 <script src="./js/changeWindows.js"></script>
+<script src="../node_modules/axios/dist/axios.min.js"></script>
+<script>
+    axios.get('./controller/getRevenue.php')
+        .then(response => {
+            const revenueData = response.data;
+            const totalRevenue = Object.values(revenueData).reduce((acc, monthRevenue) => acc + parseFloat(monthRevenue), 0);
+            const formattedTotalRevenue = totalRevenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            $('#total_sales').text(`₱ ${formattedTotalRevenue}`);
+        })
+        .catch(error => {
+            console.error('Error fetching revenue:', error);
+        });
+    axios.get('./controller/getSchedules.php')
+        .then(response => {
+            const totalAppointments = response.data.length;
+            $('#total_appointments').text(totalAppointments);
+            const weeklyAppointments = response.data.filter(appointment => {
+                const appointmentDate = new Date(appointment.date);
+                const today = new Date();
+                const diffTime = Math.abs(today - appointmentDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays <= 7;
+            });
+            $('#weekly_appointments').text(weeklyAppointments.length);
+        })
+        .catch(error => {
+            console.error('Error fetching appointments:', error);
+        });
+    axios.get('./controller/getActiveUsers.php')
+        .then(response => {
+            const totalActiveUsers = response.data;
+            $('#total_active_users').text(totalActiveUsers);
+        })
+        .catch(error => {
+            console.error('Error fetching active users:', error);
+        });
+</script>
 
 <?php include_once('./includes/footer.php'); ?>
