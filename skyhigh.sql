@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 04, 2025 at 07:29 AM
+-- Generation Time: Apr 28, 2025 at 08:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -214,6 +214,13 @@ CREATE TABLE `tbl_appointments` (
   `status` varchar(255) NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Dumping data for table `tbl_appointments`
+--
+
+INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`, `vehicle`, `service`, `date`, `time`, `status`) VALUES
+(14, 'Amiel Carhyl Lapid', 'amiellapid06@gmail.com', 'emoz sabana', '09940576781', 'qweqwewq', 'sss', '2025-04-30', '18:13', 'Pending');
+
 -- --------------------------------------------------------
 
 --
@@ -226,7 +233,36 @@ CREATE TABLE `tbl_carts` (
   `product_id` int(11) NOT NULL,
   `product_name` varchar(255) NOT NULL,
   `product_price` decimal(10,0) NOT NULL,
-  `quantity` int(11) NOT NULL
+  `quantity` int(11) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'Pending',
+  `transID` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_carts`
+--
+
+INSERT INTO `tbl_carts` (`c_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`, `status`, `transID`) VALUES
+(13, 37, 2, 'Sample product', 23, 26, 'Paid', 'pi_RhEcjbn7VBeSkEcXg1LX2T64'),
+(14, 37, 3, 'hehehez', 32, 5, 'Paid', 'pi_Vg5ocvgXYaGnT8NCADF61cGw'),
+(15, 37, 4, 'zxczxczx', 22, 2, 'Paid', 'pi_Vg5ocvgXYaGnT8NCADF61cGw'),
+(16, 37, 4, 'zxczxczx', 22, 2, 'Paid', 'pi_NKx6cNFxJETCQaPwb912a3jt'),
+(17, 37, 3, 'hehehez', 32, 4, 'Paid', 'pi_qHrzPWRGeWxbAk5t1zTYL43r'),
+(18, 37, 4, 'zxczxczx', 22, 2, 'Paid', 'pi_ffLVvNriQeP7pgxEuYe9Must'),
+(19, 37, 3, 'hehehez', 32, 4, 'Paid', 'pi_ffLVvNriQeP7pgxEuYe9Must');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_messages`
+--
+
+CREATE TABLE `tbl_messages` (
+  `msg_id` int(11) NOT NULL,
+  `receiver` varchar(255) NOT NULL,
+  `sender` varchar(255) NOT NULL,
+  `message` longtext NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -251,7 +287,10 @@ CREATE TABLE `tbl_products` (
 --
 
 INSERT INTO `tbl_products` (`product_id`, `product_name`, `product_desc`, `price`, `product_category`, `stock`, `status`, `image`) VALUES
-(2, 'Sample product', 'Hahaha ferrari circus show', 23, 'Ferrari', 0, 'available', '67dc082511b097.52235573.png');
+(2, 'Sample product', 'Hahaha ferrari circus show', 23, 'Ferrari', 0, 'available', '67dc082511b097.52235573.png'),
+(3, 'hehehez', 'zxczxc', 32, 'zxczxc', 5, 'available', '67f80cf341e256.31740933.png'),
+(4, 'zxczxczx', 'czxczxczxcxz', 22, 'eqqeq', 27, 'available', '67f80d15bda346.30392593.png'),
+(5, '23213123', 'zxczxczcz', 22, '3zxc', 32, 'unavailable', '67f80d2e7c5599.95652078.jpg');
 
 -- --------------------------------------------------------
 
@@ -264,10 +303,22 @@ CREATE TABLE `tbl_transactions` (
   `user_id` int(11) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `total` decimal(10,0) NOT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'Paid',
+  `status` varchar(255) NOT NULL DEFAULT 'Pending',
   `uuid` varchar(255) NOT NULL,
   `payment_intent_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_transactions`
+--
+
+INSERT INTO `tbl_transactions` (`t_id`, `user_id`, `date`, `total`, `status`, `uuid`, `payment_intent_id`) VALUES
+(8, 37, '2025-04-24 12:34:03', 6900, 'Ready for Pickup', 'txn_67f80b4aa1f1e1.79995092', 'pi_5Waz9PGdUyjZJmuTBgDqFCgk'),
+(21, 37, '2025-04-11 04:22:14', 24400, 'Completed', 'txn_67f879d401f246.76424737', 'pi_Vg5ocvgXYaGnT8NCADF61cGw'),
+(22, 37, '2025-04-24 16:14:29', 28900, 'Completed', 'txn_680a2c3d572820.72356948', 'pi_NKx6cNFxJETCQaPwb912a3jt'),
+(23, 37, '2025-04-24 15:52:19', 80400, 'Paid', 'txn_680a5e2f3d1010.79702092', 'pi_qHrzPWRGeWxbAk5t1zTYL43r'),
+(24, 37, '2025-04-24 15:54:09', 80400, 'Paid', 'txn_680a5e9dc0d8d4.87989130', 'pi_RhEcjbn7VBeSkEcXg1LX2T64'),
+(25, 37, '2025-04-24 15:54:32', 114600, 'Paid', 'txn_680a5eb49abc26.86443678', 'pi_ffLVvNriQeP7pgxEuYe9Must');
 
 -- --------------------------------------------------------
 
@@ -367,6 +418,12 @@ ALTER TABLE `tbl_carts`
   ADD PRIMARY KEY (`c_id`);
 
 --
+-- Indexes for table `tbl_messages`
+--
+ALTER TABLE `tbl_messages`
+  ADD PRIMARY KEY (`msg_id`);
+
+--
 -- Indexes for table `tbl_products`
 --
 ALTER TABLE `tbl_products`
@@ -446,25 +503,31 @@ ALTER TABLE `sizes`
 -- AUTO_INCREMENT for table `tbl_appointments`
 --
 ALTER TABLE `tbl_appointments`
-  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tbl_carts`
 --
 ALTER TABLE `tbl_carts`
-  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `tbl_messages`
+--
+ALTER TABLE `tbl_messages`
+  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `tbl_products`
 --
 ALTER TABLE `tbl_products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbl_transactions`
 --
 ALTER TABLE `tbl_transactions`
-  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
