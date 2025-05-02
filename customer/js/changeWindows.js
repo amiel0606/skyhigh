@@ -6,7 +6,6 @@ $(document).ready(function() {
         window.location.href = './orders.php';
     });
 
-    // Helper to format time in 12-hour format
     function formatTime24to12(time24) {
         const [hour, minute] = time24.split(":");
         let h = parseInt(hour);
@@ -16,7 +15,6 @@ $(document).ready(function() {
         return `${h}:${minute} ${ampm}`;
     }
 
-    // Generate all possible time slots (10:00 to 20:00, every 30 min)
     function generateTimeSlots() {
         const slots = [];
         let hour = 10;
@@ -34,7 +32,6 @@ $(document).ready(function() {
         return slots;
     }
 
-    // Fetch booked slots and update dropdown
     $('#dateInput').on('change', function() {
         const date = $(this).val();
         const dropdown = $('#timeDropdown');
