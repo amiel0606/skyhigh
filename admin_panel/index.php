@@ -9,11 +9,17 @@
     <div class="columns">
         <div class="column is-three-quarters">
             <div class="dashboard-card mt-6"> <i class="fa-solid fa-users fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Active Users: <span id="total_active_users"></span> </span></div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Active Users: <span
+                        id="total_active_users"></span> </span></div>
             <div class="dashboard-card"> <i class="fa-solid fa-wrench fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Appointments: <span id="total_appointments"></span> </span></div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Appointments: <span
+                        id="total_appointments"></span> </span></div>
             <div class="dashboard-card"> <i class="fa-solid fa-gear fa-5x"></i> <span
-                    class="is-size-1 has-text-weight-bold ml-3"> Total Items Sales: <span id="total_sales"></span> </span></div>
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Items Sales: <span id="total_sales"></span>
+                </span></div>
+            <div class="dashboard-card"> <i class="fa-solid fa-clipboard-list fa-5x"></i> <span
+                    class="is-size-1 has-text-weight-bold ml-3"> Total Walk-in Appointments: <span id="total_walkin"></span>
+                </span></div>
         </div>
         <div class="column">
             <div class="dashboard-card full-height d-flex flex-column mt-6">
@@ -95,6 +101,14 @@
         })
         .catch(error => {
             console.error('Error fetching active users:', error);
+        });
+    axios.get('./controller/getSchedules.php?type=Walk-in')
+        .then(response => {
+            const totalWalkInAppointments = response.data.length;
+            $('#total_walkin').text(totalWalkInAppointments);
+        })
+        .catch(error => {
+            console.error('Error fetching walk-in appointments:', error);
         });
 </script>
 

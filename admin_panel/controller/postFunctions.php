@@ -97,3 +97,27 @@ function sendEmailNotification($username, $name, $status, $reason = '')
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
+
+function addBrand($brandName) {
+    global $conn;
+    $sql = "INSERT INTO tbl_brands (brand_name) VALUES (?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $brandName);
+    return $stmt->execute();
+}
+
+function updateBrand($brandId, $brandName) {
+    global $conn;
+    $sql = "UPDATE tbl_brands SET brand_name = ? WHERE b_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $brandName, $brandId);
+    return $stmt->execute();
+}
+
+function deleteBrand($brandId) {
+    global $conn;
+    $sql = "DELETE FROM tbl_brands WHERE b_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $brandId);
+    return $stmt->execute();
+}

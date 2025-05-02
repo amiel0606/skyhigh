@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $price = floatval($_POST['price']);
     $category = trim($_POST['category']);
     $stock = intval($_POST['stock']);
+    $brandName = trim($_POST['brand_name']);
     $status = 'Available'; 
-
     $defaultImage = 'default.png'; 
     $file = $_FILES['product_image'];
 
@@ -35,8 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    $sql = "INSERT INTO tbl_products (product_name, product_desc, price, product_category, stock, status, image) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO tbl_products (product_name, product_desc, price, product_category, stock, status, image, brand) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = mysqli_stmt_init($conn);
 
@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("SQL Error: " . mysqli_error($conn));
     }
 
-    mysqli_stmt_bind_param($stmt, "ssdssss", $productName, $description, $price, $category, $stock, $status, $defaultImage);
+    mysqli_stmt_bind_param($stmt, "ssdsssss", $productName, $description, $price, $category, $stock, $status, $defaultImage, $brandName);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $conn->close();

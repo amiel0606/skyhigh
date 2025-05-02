@@ -1,13 +1,17 @@
 <?php
 include_once("../../admin_panel/controller/dbCon.php");
 
-// Get category from request
-$category = isset($_GET['category']) ? $_GET['category'] : '';
+$brand = isset($_GET['brand']) ? $_GET['brand'] : '';
+$sort = isset($_GET['sort']) ? strtolower($_GET['sort']) : '';
 
-// Fetch products by category
 $query = "SELECT * FROM tbl_products WHERE status = 'Available' AND stock > 0";
-if (!empty($category)) {
-    $query .= " AND product_category = '" . $conn->real_escape_string($category) . "'";
+if (!empty($brand)) {
+    $query .= " AND brand = '" . $conn->real_escape_string($brand) . "'";
+}
+if ($sort === 'asc') {
+    $query .= " ORDER BY price ASC";
+} elseif ($sort === 'desc') {
+    $query .= " ORDER BY price DESC";
 }
 
 $result = $conn->query($query);
@@ -18,17 +22,16 @@ while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
 
-// Fetch all categories with product count
-$categoriesQuery = "SELECT product_category, COUNT(*) as product_count 
-                   FROM tbl_products 
-                   WHERE status = 'Available' AND stock > 0 
-                   GROUP BY product_category";
-$categoriesResult = $conn->query($categoriesQuery);
-$categories = [];
+$brandsQuery = "SELECT brand, COUNT(*) as product_count 
+                FROM tbl_products 
+                WHERE status = 'Available' AND stock > 0 
+                GROUP BY brand";
+$brandsResult = $conn->query($brandsQuery);
+$brands = [];
 
-while ($row = $categoriesResult->fetch_assoc()) {
-    $categories[] = [
-        'name' => $row['product_category'],
+while ($row = $brandsResult->fetch_assoc()) {
+    $brands[] = [
+        'name' => $row['brand'],
         'count' => $row['product_count']
     ];
 }
@@ -36,6 +39,6 @@ while ($row = $categoriesResult->fetch_assoc()) {
 $conn->close();
 
 echo json_encode([
-    'categories' => $categories,
+    'brands' => $brands,
     'products' => $products
 ]); 

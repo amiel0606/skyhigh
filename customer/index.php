@@ -38,7 +38,7 @@ if (!isset($_SESSION['verified'])) {
     }
 </style>
 <p class="logo-text-motorcycle is-size-3 text-center">Just Ride & Go with SkyHigh.</p>
-<p class="text text-center">How is your ride today, Sounds like not good! Don’t worry. Find your mechanic online Book as
+<p class="text text-center">How is your ride today, Sounds like not good! Don't worry. Find your mechanic online Book as
     you wish with SkyHigh. We offer you a free inquiries, Make your appointment now.</p>
 <div class="container has-text-centered mt-5">
     <button class="button is-warning"
@@ -107,13 +107,16 @@ if (!isset($_SESSION['verified'])) {
                         <div class="field">
                             <label class="label">Select Time</label>
                             <div class="control">
-                                <input type="time" name="time" class="input" min="10:00" max="20:00">
+                                <select name="time" id="timeDropdown" class="input">
+                                    <option value="">Select a time</option>
+                                    <!-- Options will be populated by JS -->
+                                </select>
                             </div>
                         </div>
                         <div class="field">
                             <label class="label">Date</label>
                             <div class="control">
-                                <input type="date" name="date" class="input" min="<?php echo $today; ?>">
+                                <input type="date" name="date" id="dateInput" class="input" min="<?php echo $today; ?>">
                             </div>
                         </div>
                     </div>
@@ -132,7 +135,7 @@ if (!isset($_SESSION['verified'])) {
         <h1 class="title is-3">Verify your email address</h1>
         <p class="mb-4">
             Please confirm that you want to use this as your Skyhigh account email address.
-            Once it’s done, you will be able to start browsing. Thank you.
+            Once it's done, you will be able to start browsing. Thank you.
         </p>
         <div class="field">
             <div class="control">
@@ -145,6 +148,7 @@ if (!isset($_SESSION['verified'])) {
 </div>
 <div id="isVerified" style="display:none;"><?php echo json_encode($_SESSION['verified']); ?></div>
 <div id="isLoggedIn" style="display:none;"><?php echo isset($_SESSION["username"]) ? 'true' : 'false'; ?></div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="./js/otp.js"></script>
 <script src="./js/changeWindows.js"></script>
 

@@ -1,5 +1,10 @@
 <?php include_once('./includes/header.php'); ?>
-
+<?php
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ./login.php');
+    exit();
+}
+?>
 <section class="section">
     <div class="container is-fluid">
         <div class="columns is-centered is-gapless is-fullheight">
@@ -265,6 +270,19 @@
                 fetchMessages(selectedUserId);
             }
         }, 5000);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const preselectUserId = urlParams.get('user_id');
+        if (preselectUserId) {
+            // Wait for users to load, then select
+            const interval = setInterval(() => {
+                const userItem = document.querySelector(`.user-item[data-user-id="${preselectUserId}"]`);
+                if (userItem) {
+                    userItem.click();
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
     });
 </script>
 

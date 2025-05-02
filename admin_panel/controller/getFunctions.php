@@ -35,6 +35,20 @@ function searchSchedules($query)
     return $schedules;
 }
 
+function getWalkInAppointments()
+{
+    global $conn; 
+    $query = "SELECT * FROM tbl_appointments WHERE type = 'Walk-in'";
+    $result = mysqli_query($conn, $query);
+    $appointments = [];
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $appointments[] = $row;
+    }
+
+    return $appointments;
+}
+
 function getScheduleById($id)
 {
     global $conn;
@@ -134,4 +148,28 @@ function closeConnection()
 {
     global $conn;
     $conn->close();
+}
+
+function getAllBrands()
+{
+    global $conn;
+    $sql = "SELECT * FROM tbl_brands ORDER BY brand_name ASC";
+    $result = $conn->query($sql);
+
+    $brands = [];
+    while ($row = $result->fetch_assoc()) {
+        $brands[] = $row;
+    }
+    return $brands;
+}
+
+function getBrandById($id)
+{
+    global $conn;
+    $sql = "SELECT * FROM tbl_brands WHERE b_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
 }

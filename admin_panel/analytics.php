@@ -1,5 +1,11 @@
 <?php include_once('./includes/header.php'); ?>
-
+<?php include './includes/notification.php'; ?>
+<?php
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ./login.php');
+    exit();
+}
+?>
 <style>
     .chart-container {
         max-width: 1000px;

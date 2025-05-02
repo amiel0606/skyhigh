@@ -11,4 +11,7 @@ $(document).ready(function() {
     $('#btn-chat').click(function() {
         window.location.href = './message.php';
     });
+    $('#btn-logout').click(function() {
+        window.location.href = './controller/logout.php';
+    });
 });

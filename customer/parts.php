@@ -109,15 +109,23 @@ include_once './includes/header.php';
 <div class="columns is-centered">
     <!-- Sidebar -->
     <div class="column is-2 sidebar has-text-white">
-        <p class="title is-5 has-text-white">Category</p>
-        <aside class="menu" id="categoryMenu">
-            <!-- Categories will be dynamically added here -->
+        <p class="title is-5 has-text-white">Brand</p>
+        <aside class="menu" id="brandMenu">
+            <!-- Brands will be dynamically added here -->
         </aside>
     </div>
 
     <!-- Main Content -->
     <div class="column is-10">
         <div class="box has-background-primary product-container">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                <label for="priceSort" style="color: white; margin-right: 10px;">Sort by Price:</label>
+                <select id="priceSort" style="width: 150px;">
+                    <option value="">Default</option>
+                    <option value="asc">Low to High</option>
+                    <option value="desc">High to Low</option>
+                </select>
+            </div>
             <div class="columns is-multiline is-mobile" id="productContainer">
                 <!-- Products will be dynamically added here -->
             </div>
@@ -137,9 +145,11 @@ include_once './includes/header.php';
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Add notification container to the page
         $('body').append('<div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>');
         
+        let selectedBrand = '';
+        let selectedSort = '';
+
         function showNotification(notification) {
             const { type, title, message } = notification;
             const notificationId = 'notification-' + Date.now();
@@ -175,14 +185,12 @@ include_once './includes/header.php';
             
             $('#notification-container').append(notificationHtml);
             
-            // Add click event to close button
             $(`#${notificationId} .delete`).on('click', function() {
                 $(`#${notificationId}`).fadeOut(300, function() {
                     $(this).remove();
                 });
             });
             
-            // Auto-remove after 5 seconds
             setTimeout(function() {
                 $(`#${notificationId}`).fadeOut(300, function() {
                     $(this).remove();
@@ -190,37 +198,40 @@ include_once './includes/header.php';
             }, 5000);
         }
         
-        function fetchData(category = '') {
+        function fetchData(brand = '', sort = '') {
+            let url = './controllers/fetchProductsByCategory.php';
+            let params = [];
+            if (brand) params.push('brand=' + encodeURIComponent(brand));
+            if (sort) params.push('sort=' + encodeURIComponent(sort));
+            if (params.length > 0) url += '?' + params.join('&');
+
             $.ajax({
-                url: category ? `./controllers/fetchProductsByCategory.php?category=${encodeURIComponent(category)}` : "./controllers/fetchProductsByCategory.php",
+                url: url,
                 type: "GET",
                 dataType: "json",
                 success: function (response) {
-                    let categoryMenu = "";
-                    
-                    // Add "All Categories" option
-                    categoryMenu += `
+                    let brandMenu = "";
+                    // Add "All Brands" option
+                    brandMenu += `
                         <p class="menu-label has-text-white">
-                            <a class="has-text-white category-link" data-category="">All Categories</a>
+                            <a class="has-text-white brand-link" data-brand="">All Brands</a>
                         </p>
                     `;
-                    
-                    if (response.categories.length > 0) {
-                        response.categories.forEach(category => {
-                            // Only show categories that have products
-                            if (category.count > 0) {
-                                let categoryId = category.name.toLowerCase().replace(/\s+/g, '-');
-                                categoryMenu += `
+                    if (response.brands.length > 0) {
+                        response.brands.forEach(brand => {
+                            if (brand.count > 0) {
+                                let brandId = brand.name ? brand.name.toLowerCase().replace(/\s+/g, '-') : '';
+                                brandMenu += `
                                     <p class="menu-label has-text-white">
-                                        <a class="has-text-white category-link" data-category="${category.name}">${category.name} (${category.count})</a>
+                                        <a class="has-text-white brand-link" data-brand="${brand.name}">${brand.name} (${brand.count})</a>
                                     </p>
                                 `;
                             }
                         });
                     } else {
-                        categoryMenu += "<p class='menu-label has-text-white'>No Categories Found</p>";
+                        brandMenu += "<p class='menu-label has-text-white'>No Brands Found</p>";
                     }
-                    $("#categoryMenu").html(categoryMenu);
+                    $("#brandMenu").html(brandMenu);
 
                     let productContainer = "";
                     if (response.products.length > 0) {
@@ -231,6 +242,8 @@ include_once './includes/header.php';
                                     <img src="../admin_panel/${product.image}" alt="Product" class="product-image">
                                     <p class="has-text-weight-bold">${product.product_name}</p>
                                     <p class="has-text-weight-bold">${product.product_desc}</p>
+                                    <p class="has-text-weight-bold">Brand: ${product.brand || ''}</p>
+                                    <p class="has-text-weight-bold">Price: ₱${product.price}</p>
                                     <p class="has-text-weight-bold">Available Stocks: ${product.stock}</p>
                                     <button class="button is-primary add-to-cart-btn" data-id="${product.product_id}" data-name="${product.product_name}" data-price="${product.price}">
                                         Add to Cart
@@ -243,16 +256,15 @@ include_once './includes/header.php';
                         productContainer = "<p class='has-text-white'>No Products Available</p>";
                     }
                     $("#productContainer").html(productContainer);
-                    
-                    // Highlight the selected category
-                    if (category) {
-                        $(`.category-link[data-category="${category}"]`).addClass("has-background-primary");
+                    // Highlight the selected brand
+                    if (brand) {
+                        $(`.brand-link[data-brand="${brand}"]`).addClass("has-background-primary");
                     } else {
-                        $(".category-link[data-category='']").addClass("has-background-primary");
+                        $(".brand-link[data-brand='']").addClass("has-background-primary");
                     }
                 },
                 error: function () {
-                    $("#categoryMenu").html("<p class='menu-label has-text-white'>Error fetching categories.</p>");
+                    $("#brandMenu").html("<p class='menu-label has-text-white'>Error fetching brands.</p>");
                     $("#productContainer").html("<p class='has-text-white'>Error fetching products.</p>");
                 }
             });
@@ -261,16 +273,19 @@ include_once './includes/header.php';
         // Initial load
         fetchData();
 
-        // Handle category click
-        $(document).on("click", ".category-link", function() {
-            const category = $(this).data("category");
-            
-            // Highlight selected category
-            $(".category-link").removeClass("has-background-primary");
+        // Handle brand click
+        $(document).on("click", ".brand-link", function() {
+            selectedBrand = $(this).data("brand");
+            // Highlight selected brand
+            $(".brand-link").removeClass("has-background-primary");
             $(this).addClass("has-background-primary");
-            
-            // Fetch products for this category
-            fetchData(category);
+            fetchData(selectedBrand, selectedSort);
+        });
+
+        // Handle price sort change
+        $(document).on("change", "#priceSort", function() {
+            selectedSort = $(this).val();
+            fetchData(selectedBrand, selectedSort);
         });
 
         // Handle add to cart

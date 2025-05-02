@@ -1,4 +1,11 @@
 <?php include_once('./includes/header.php'); ?>
+<?php include './includes/notification.php'; ?>
+<?php
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ./login.php');
+    exit();
+}
+?>
 <section class="section">
     <div class="container">
         <div class="mb-4">

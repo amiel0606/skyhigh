@@ -29,13 +29,13 @@ if (!$appointmentId || !$status) {
     exit();
 }
 
-$validStatuses = ['approved', 'declined'];
+$validStatuses = ['Confirmed', 'declined'];
 if (!in_array($status, $validStatuses)) {
     echo json_encode(['success' => false, 'message' => 'Invalid status']);
     exit();
 }
 
-$result = ($status === 'approved') ? approveAppointment($appointmentId) : declineAppointment($appointmentId, $reason);
+$result = ($status === 'Confirmed') ? approveAppointment($appointmentId) : declineAppointment($appointmentId, $reason);
 
 if ($result) {
     echo json_encode(['success' => true, 'message' => 'Appointment status updated successfully']);
