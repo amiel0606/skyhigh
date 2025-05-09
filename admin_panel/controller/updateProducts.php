@@ -1,6 +1,14 @@
 <?php
 require_once './dbCon.php';
 
+// Support JSON input (application/json)
+if (empty($_POST) && isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (isset($input['products'])) {
+        $_POST['products'] = $input['products'];
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Case 1: Handle product info update (from JSON body via `$_POST['products']`)
@@ -15,9 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $price = $product['price'];
                 $category = $product['category'];
                 $stock = $product['stock'];
+                $brand = $product['brand'];
 
-                $stmt = $conn->prepare("UPDATE tbl_products SET product_name = ?, product_desc = ?, price = ?, product_category = ?, stock = ? WHERE product_id = ?");
-                $stmt->bind_param("sssssi", $name, $description, $price, $category, $stock, $id);
+                $stmt = $conn->prepare("UPDATE tbl_products SET product_name = ?, product_desc = ?, price = ?, product_category = ?, stock = ?, brand = ? WHERE product_id = ?");
+                $stmt->bind_param("ssssssi", $name, $description, $price, $category, $stock, $brand, $id);
                 $stmt->execute();
             }
 

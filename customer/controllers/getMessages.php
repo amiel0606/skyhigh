@@ -9,7 +9,7 @@ if (!isset($_SESSION['uID'])) {
 
 $user_id = $_SESSION['uID'];
 
-$sql = "SELECT msg_id, message, sender, receiver, timestamp 
+$sql = "SELECT msg_id, message, sender, receiver, timestamp, type
         FROM tbl_messages
         WHERE (receiver = ? AND sender = 'admin') 
         OR (sender = ? AND receiver = 'admin')
@@ -25,23 +25,22 @@ if (!mysqli_stmt_prepare($stmt, $sql)) {
 mysqli_stmt_bind_param($stmt, "ss", $user_id, $user_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+$response = ['status' => 'success', 'messages' => []];
 
-$messages = [];
 while ($row = mysqli_fetch_assoc($result)) {
-    $messages[] = [
+    $msg = [
         'msg_id' => $row['msg_id'],
-        'message' => htmlspecialchars($row['message']),
         'sender' => $row['sender'],
         'receiver' => $row['receiver'],
+        'message' => $row['message'],
+        'isFromAdmin' => ($row['sender'] === 'admin'),
         'timestamp' => $row['timestamp'],
-        'isFromAdmin' => ($row['sender'] === 'admin')
+        'type' => $row['type']
     ];
+
+    $response['messages'][] = $msg;
 }
 
-echo json_encode([
-    'status' => 'success',
-    'messages' => $messages
-]);
-
+echo json_encode($response);
 mysqli_stmt_close($stmt);
 mysqli_close($conn);

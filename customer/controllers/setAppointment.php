@@ -11,7 +11,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = mysqli_real_escape_string($conn, $_POST['address']);
     $contact = mysqli_real_escape_string($conn, $_POST['contact']);
     $vehicle = mysqli_real_escape_string($conn, $_POST['vehicle']);
-    $service = mysqli_real_escape_string($conn, $_POST['service']);
+    $service = $_POST['service'] === 'Others'
+        ? mysqli_real_escape_string($conn, $_POST['other_service'])
+        : mysqli_real_escape_string($conn, $_POST['service']);
     $time = mysqli_real_escape_string($conn, $_POST['time']);
     $date = mysqli_real_escape_string($conn, $_POST['date']);
 

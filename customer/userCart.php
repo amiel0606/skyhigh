@@ -232,7 +232,7 @@ include_once("./includes/header.php");
         axios.post("./controllers/createPayment.php")
             .then(response => {
                 if (response.data.success) {
-                    window.location.href = response.data.redirect_url; // Redirect to payment page
+                    window.location.href = response.data.redirect_url; 
                 } else {
                     alert("Payment initialization failed.");
                 }

@@ -2,6 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require '../../vendor/autoload.php';
+session_start();
 function emptyInputSignup($name, $email, $address, $phone, $password, $confPassword)
 {
     return empty($name) || empty($email) || empty($address) || empty($phone) || empty($password) || empty($confPassword);
@@ -62,10 +63,19 @@ function loginUser($conn, $email, $password)
         $_SESSION["verified"] = $userExists["verified"];
         $_SESSION["otp"] = $userExists["otp"];
 
+        $uID = $userExists["uID"];
+        $updateMessagesSql = "UPDATE tbl_messages SET sender = ? WHERE sender = 'guest'";
+        $updateStmt = mysqli_stmt_init($conn);
+        if (mysqli_stmt_prepare($updateStmt, $updateMessagesSql)) {
+            mysqli_stmt_bind_param($updateStmt, "s", $uID);
+            mysqli_stmt_execute($updateStmt);
+            mysqli_stmt_close($updateStmt);
+        }
+
         if ($userExists["role"] === "admin") {
             header("location: ../../admin_panel/index.php?error=none");
         } elseif ($userExists["role"] === "customer") {
-            header("location: ../index.php?error=none");
+            header("location: ../index.php?error=loginSuccess");
         } else {
             header("location: ../index.php?error=InvalidRole");
         }
@@ -120,6 +130,6 @@ function createUser($conn, $name, $email, $address, $phone, $password)
 
     sendOTPEmail($email, $otp); 
 
-    header("location: ../index.php?success=Registered");
+    header("location: ../index.php?error=Registered");
     exit();
 }

@@ -66,7 +66,65 @@ if (!isset($_SESSION['admin_id'])) {
     .overlay-buttons button {
         margin: 5px;
     }
+
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 150px;
+        z-index: 1000;
+    }
+    
+    .notification {
+        margin-bottom: 10px;
+    }
 </style>
+
+<!-- Add notification container -->
+<div id="notificationContainer" class="notification-container"></div>
+
+<script>
+// Function to show notification
+function showNotification(message, type = 'is-success') {
+    const container = document.getElementById('notificationContainer');
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    // Add delete button
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete';
+    deleteButton.onclick = () => notification.remove();
+    
+    notification.appendChild(deleteButton);
+    notification.appendChild(document.createTextNode(message));
+    container.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => notification.remove(), 5000);
+}
+
+// Check for URL parameters on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error === 'none') {
+        showNotification('Success!', 'is-success');
+    }
+    if (error === 'uploadFailed') {
+        showNotification('Failed to upload product!', 'is-danger');
+    }
+    if (error === 'invalidImage') {
+        showNotification('Invalid image format!', 'is-danger');
+    }
+    if (error === 'imageTooLarge') {
+        showNotification('Image size too large!', 'is-danger');
+    }
+    if (error === 'stmtFailed') {
+        showNotification('Database error occurred!', 'is-danger');
+    }
+});
+</script>
+
 <!-- Product Upload Modal -->
 <div id="uploadProductModal" class="modal">
     <div class="modal-background"></div>
@@ -183,11 +241,6 @@ if (!isset($_SESSION['admin_id'])) {
                 <li id="tab-brands"><a href="#" onclick="showTab('brands')">Brands</a></li>
             </ul>
         </nav>
-
-
-
-
-
 
         <div class="is-flex is-align-items-center is-justify-content-space-between">
             <h1 class="title">Products</h1>
@@ -320,24 +373,42 @@ if (!isset($_SESSION['admin_id'])) {
             });
     }
 
-
-
     function editProducts() {
         document.getElementById('editProducts').style.display = 'none';
         document.getElementById('saveProduct').style.display = 'inline-block';
 
-        const tableBody = document.getElementById('productsTableBody');
-        const rows = tableBody.getElementsByTagName('tr');
+        // First fetch all brands
+        axios.get('./controller/fetchBrands.php')
+            .then(function (response) {
+                const brands = response.data;
+                const tableBody = document.getElementById('productsTableBody');
+                const rows = tableBody.getElementsByTagName('tr');
 
-        for (let row of rows) {
-            const cells = row.getElementsByTagName('td');
-            for (let i = 0; i < cells.length - 1; i++) {
-                if (i === 1) continue;
+                for (let row of rows) {
+                    const cells = row.getElementsByTagName('td');
+                    for (let i = 0; i < cells.length - 1; i++) {
+                        if (i === 1) continue; // Skip image cell
 
-                const cellContent = cells[i].textContent.trim();
-                cells[i].innerHTML = `<input type="text" value="${cellContent}" class="input is-small">`;
-            }
-        }
+                        if (i === 5) { // Brand column
+                            const currentBrandId = row.dataset.brandId; // Get brand ID from data attribute
+                            let brandDropdown = `<select class="input is-small">`;
+                            brands.forEach(brand => {
+                                const selected = brand.b_id === currentBrandId ? 'selected' : '';
+                                brandDropdown += `<option value="${brand.b_id}" ${selected}>${brand.brand_name}</option>`;
+                            });
+                            brandDropdown += '</select>';
+                            cells[i].innerHTML = brandDropdown;
+                        } else {
+                            const cellContent = cells[i].textContent.trim();
+                            cells[i].innerHTML = `<input type="text" value="${cellContent}" class="input is-small">`;
+                        }
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.error("Error fetching brands:", error);
+                showNotification('Error loading brands', 'is-danger');
+            });
     }
 
     function saveProducts() {
@@ -357,7 +428,8 @@ if (!isset($_SESSION['admin_id'])) {
                 description: cells[2].getElementsByTagName('input')[0].value,
                 price: cells[3].getElementsByTagName('input')[0].value.replace(/[₱,]/g, ''),
                 category: cells[4].getElementsByTagName('input')[0].value,
-                stock: cells[5].getElementsByTagName('input')[0].value,
+                brand: cells[5].getElementsByTagName('select')[0].value,
+                stock: cells[6].getElementsByTagName('input')[0].value,
                 id: row.dataset.productId
             };
 
@@ -366,14 +438,22 @@ if (!isset($_SESSION['admin_id'])) {
             cells[2].textContent = productData.description;
             cells[3].textContent = productData.price;
             cells[4].textContent = productData.category;
-            cells[5].textContent = productData.stock;
+            cells[5].textContent = cells[5].getElementsByTagName('select')[0].options[cells[5].getElementsByTagName('select')[0].selectedIndex].text;
+            cells[6].textContent = productData.stock;
         }
+
         axios.post("./controller/updateProducts.php", { products: JSON.stringify(updatedProducts) })
             .then(function (response) {
-                console.log(response);
+                if (response.data.success) {
+                    showNotification('Products updated successfully!', 'is-success');
+                } else {
+                    showNotification('Failed to update products', 'is-danger');
+                }
+                fetchProducts();
             })
             .catch(function (error) {
                 console.error("Error updating products:", error);
+                showNotification('Error updating products', 'is-danger');
             });
     }
 
@@ -386,7 +466,7 @@ if (!isset($_SESSION['admin_id'])) {
                     response.data.forEach(product => {
                         let statusClass = product.status.toLowerCase() === "available" ? "available" : "unavailable";
                         tableContent += `
-                                <tr data-product-id="${product.product_id}"> >
+                                <tr data-product-id="${product.product_id}" data-brand-id="${product.brand}">
                                     <td>${product.product_name}</td>
                                     <td>
                                         <div class="image-container">
@@ -400,7 +480,7 @@ if (!isset($_SESSION['admin_id'])) {
                                     <td>${product.product_desc}</td>
                                     <td>₱${product.price}</td>
                                     <td>${product.product_category}</td>
-                                    <td>${product.brand}</td>
+                                    <td>${product.brand_name}</td>
                                     <td>${product.stock}</td>
                                     <td>
                                         <button data-id="${product.product_id}" class="toggle-button ${statusClass}" onclick="toggleStatus(this)">${product.status}</button>
@@ -409,12 +489,12 @@ if (!isset($_SESSION['admin_id'])) {
                             `;
                     });
                 } else {
-                    tableContent = "<tr><td colspan='7'>No products found.</td></tr>";
+                    tableContent = "<tr><td colspan='8'>No products found.</td></tr>";
                 }
                 $("#productsTableBody").html(tableContent);
             })
             .catch(function () {
-                $("#productsTableBody").html("<tr><td colspan='7'>Error fetching data.</td></tr>");
+                $("#productsTableBody").html("<tr><td colspan='8'>Error fetching data.</td></tr>");
             });
     }
     fetchProducts();
@@ -513,8 +593,18 @@ if (!isset($_SESSION['admin_id'])) {
         axios.post('./controller/deleteBrand.php', {
             brand_id: brandId
         })
-            .then(() => fetchBrands())
-            .catch(() => alert("Error deleting brand."));
+        .then(response => {
+            const data = response.data;
+            if (data.success) {
+                showNotification(data.message, 'is-success');
+                fetchBrands();
+            } else {
+                showNotification(data.message, 'is-danger');
+            }
+        })
+        .catch(() => {
+            showNotification("Error deleting brand.", 'is-danger');
+        });
     }
 
     function openBrandModal(isEdit = false, brand = null) {
@@ -525,7 +615,7 @@ if (!isset($_SESSION['admin_id'])) {
     }
 
     function closeBrandModal() {
-        $('#brandForm')[0].reset();
+        document.getElementById('brandForm')[0].reset();
         $('#brandIdInput').val('');
         $('#brandModal').removeClass('is-active');
     }
@@ -551,7 +641,7 @@ if (!isset($_SESSION['admin_id'])) {
                 $brandSelect.empty();
                 $brandSelect.append('<option value="">Select a brand</option>');
                 brands.forEach(function (brand) {
-                    $brandSelect.append(`<option value="${brand.brand_name}">${escapeHtml(brand.brand_name)}</option>`);
+                    $brandSelect.append(`<option value="${brand.b_id}">${escapeHtml(brand.brand_name)}</option>`);
                 });
             })
             .catch(function () {
@@ -582,9 +672,7 @@ if (!isset($_SESSION['admin_id'])) {
         document.getElementById('viewImageModal').classList.remove('is-active');
     }
 
-    // Upload Product Image
     function uploadProductImage(productId) {
-        // Create file input dynamically
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -601,14 +689,14 @@ if (!isset($_SESSION['admin_id'])) {
             })
             .then(function (response) {
                 if (response.data.success) {
-                    alert('Image uploaded successfully!');
+                    showNotification('Image uploaded successfully!', 'is-success');
                     fetchProducts(); 
                 } else {
-                    alert('Failed to upload image.');
+                    showNotification('Failed to upload image.', 'is-danger');
                 }
             })
             .catch(function () {
-                alert('Error uploading image.');
+                showNotification('Error uploading image.', 'is-danger');
             });
         });
 

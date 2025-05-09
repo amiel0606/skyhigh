@@ -28,6 +28,10 @@ include_once './includes/header.php';
                         <input class="input" type="text" id="messageInput" placeholder="Type a message...">
                     </div>
                     <div class="control">
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                        <button class="button is-info" id="imageButton">📷</button>
+                    </div>
+                    <div class="control">
                         <button class="button is-primary" id="sendButton">Send</button>
                     </div>
                 </div>
@@ -50,7 +54,6 @@ include_once './includes/header.php';
         border-radius: 5px;
     }
 
-
     .menu-item:hover {
         background-color: rgba(255, 255, 255, 0.1) !important;
     }
@@ -70,6 +73,8 @@ include_once './includes/header.php';
         padding: 10px;
         border-radius: 5px;
         height: 600px;
+        display: flex;
+        flex-direction: column;
     }
 
     .message-container {
@@ -103,40 +108,40 @@ include_once './includes/header.php';
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const chatMessages = document.querySelector('.chat-messages');
-        
+
         function sendMessage() {
             const message = messageInput.value.trim();
             if (message === '') return;
-            
+
             const messageContainer = document.createElement('div');
             messageContainer.className = 'message-container';
             messageContainer.innerHTML = `<p class="my-message has-background-primary"><strong>You:</strong> ${message} <small class="has-text-grey-lighter">${formatTimestamp(new Date())}</small></p>`;
             chatMessages.appendChild(messageContainer);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             messageInput.value = '';
-            
+
             axios.post('./controllers/messaging.php', {
                 message: message
             })
-            .then(function(response) {
-                if (response.data.status === 'error') {
-                    console.error('Error sending message:', response.data.message);
-                    showNotification(response.data.message, 'error');
-                } else {
-                    showNotification('Message sent successfully', 'success');
-                }
-            })
-            .catch(function(error) {
-                console.error('Error:', error);
-                showNotification('Failed to send message. Please try again.', 'error');
-            });
+                .then(function (response) {
+                    if (response.data.status === 'error') {
+                        console.error('Error sending message:', response.data.message);
+                        showNotification(response.data.message, 'error');
+                    } else {
+                        showNotification('Message sent successfully', 'success');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    showNotification('Failed to send message. Please try again.', 'error');
+                });
         }
-        
+
         function showNotification(message, type) {
             const notification = document.createElement('div');
             notification.className = `notification is-${type === 'error' ? 'danger' : 'success'} is-light`;
@@ -144,79 +149,149 @@ include_once './includes/header.php';
             notification.style.top = '20px';
             notification.style.right = '20px';
             notification.style.zIndex = '1000';
-            
-            notification.innerHTML = `
-                <button class="delete"></button>
+
+            notification.innerHTML = `                <button class="delete"></button>
                 ${message}
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             const deleteButton = notification.querySelector('.delete');
-            deleteButton.addEventListener('click', function() {
+            deleteButton.addEventListener('click', function () {
                 notification.remove();
             });
-            
+
             setTimeout(() => {
                 if (notification.parentNode) {
                     notification.remove();
                 }
             }, 5000);
         }
-        
-        function fetchNewMessages() {
-            axios.get('./controllers/getMessages.php')
-            .then(function(response) {
-                if (response.data.status === 'success') {
-                    chatMessages.innerHTML = '';
-                    
-                    response.data.messages.forEach(function(msg) {
-                        const messageContainer = document.createElement('div');
-                        messageContainer.className = 'message-container';
-                        messageContainer.setAttribute('data-message-id', msg.msg_id);
-                        
-                        if (msg.isFromAdmin) {
-                            messageContainer.innerHTML = `
-                                <p class="contact-message">
-                                    <strong>Admin:</strong> ${msg.message}
-                                    <small class="has-text-grey">${formatTimestamp(msg.timestamp)}</small>
-                                </p>`;
-                        } else {
-                            messageContainer.innerHTML = `
-                                <p class="my-message has-background-primary">
-                                    <strong>You:</strong> ${msg.message}
-                                    <small class="has-text-grey-lighter">${formatTimestamp(msg.timestamp)}</small>
-                                </p>`;
-                        }
-                        
-                        chatMessages.appendChild(messageContainer);
-                    });
-                    
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-            })
-            .catch(function(error) {
-                console.error('Error fetching messages:', error);
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             });
         }
-        
+
+        function fetchNewMessages() {
+            axios.get('./controllers/getMessages.php')
+                .then(function (response) {
+                    if (response.data.status === 'success') {
+                        chatMessages.innerHTML = '';
+
+                        let imagesToLoad = 0;
+                        let imagesLoaded = 0;
+
+                        response.data.messages.forEach(function (msg) {
+                            const messageContainer = document.createElement('div');
+                            messageContainer.className = 'message-container';
+                            messageContainer.setAttribute('data-message-id', msg.msg_id);
+
+                            const isImage = msg.type === 'image';
+                            let messageContent = msg.message;
+
+                            if (isImage) {
+                                messageContent = `<img src="${msg.message}" style="max-width: 200px; border-radius: 10px;">`;
+                                imagesToLoad++;
+                            }
+
+                            if (msg.isFromAdmin) {
+                                messageContainer.innerHTML = `
+                            <p class="contact-message">
+                                <strong>Admin:</strong> ${messageContent}
+                                <small class="has-text-grey">${formatTimestamp(msg.timestamp)}</small>
+                            </p>`;
+                            } else {
+                                messageContainer.innerHTML = `
+                            <p class="my-message has-background-primary">
+                                <strong>You:</strong> ${messageContent}
+                                <small class="has-text-grey-lighter">${formatTimestamp(msg.timestamp)}</small>
+                            </p>`;
+                            }
+
+                            chatMessages.appendChild(messageContainer);
+                        });
+
+                        if (imagesToLoad === 0) {
+                            scrollToBottom();
+                        } else {
+                            // Wait for all images to load before scrolling
+                            const imgs = chatMessages.querySelectorAll('img');
+                            imgs.forEach(img => {
+                                img.onload = () => {
+                                    imagesLoaded++;
+                                    if (imagesLoaded === imagesToLoad) {
+                                        scrollToBottom();
+                                    }
+                                };
+                            });
+                        }
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error fetching messages:', error);
+                });
+        }
+
         function formatTimestamp(timestamp) {
             const date = new Date(timestamp);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
-        
+
         sendButton.addEventListener('click', sendMessage);
-        
-        messageInput.addEventListener('keypress', function(e) {
+
+        messageInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
-        
+
         messageInput.focus();
-        
-        fetchNewMessages(); 
+
+        fetchNewMessages();
         setInterval(fetchNewMessages, 5000);
+
+        document.getElementById('imageButton').addEventListener('click', () => {
+            document.getElementById('imageInput').click();
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            axios.post('./controllers/messaging.php', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+                .then(response => {
+                    if (response.data.status === 'success') {
+                        const chatMessages = document.querySelector('.chat-messages');
+                        const messageContainer = document.createElement('div');
+                        messageContainer.className = 'message-container';
+                        messageContainer.innerHTML = `
+                <p class="my-message has-background-primary">
+                    <strong>You:</strong><br>
+                    <img src="${response.data.imageUrl}" style="max-width: 200px; border-radius: 10px;">
+                    <br><small class="has-text-grey-lighter">${formatTimestamp(new Date())}</small>
+                </p>`;
+                        chatMessages.appendChild(messageContainer);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        showNotification('Image sent successfully', 'success');
+                    } else {
+                        showNotification(response.data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    showNotification('Failed to send image.', 'error');
+                });
+
+            this.value = ''; // reset file input
+        });
+
     });
 </script>
 <script src="./js/changeWindows.js"></script>

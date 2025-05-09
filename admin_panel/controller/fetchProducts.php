@@ -1,7 +1,10 @@
 <?php
 require_once './dbCon.php';
 
-$query = "SELECT * FROM tbl_products ORDER BY product_id DESC";
+$query = "SELECT p.*, b.brand_name 
+FROM tbl_products p 
+LEFT JOIN tbl_brands b ON p.brand = b.b_id 
+ORDER BY p.product_id DESC";
 $result = $conn->query($query);
 
 $products = [];

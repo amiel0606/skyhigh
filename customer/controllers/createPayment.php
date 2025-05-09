@@ -23,7 +23,7 @@ $user_name = $userData['name'];
 $user_email = $userData['username'];
 $user_contact = $userData['contact'];
 
-$sql = "SELECT SUM(product_price * quantity) AS total FROM tbl_carts WHERE user_id = '$user_id'";
+$sql = "SELECT SUM(product_price * quantity) AS total FROM tbl_carts WHERE user_id = '$user_id' AND status != 'Paid'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $totalPrice = $row['total'] * 100;

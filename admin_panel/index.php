@@ -71,7 +71,7 @@
     axios.get('./controller/getRevenue.php')
         .then(response => {
             const revenueData = response.data;
-            const totalRevenue = Object.values(revenueData).reduce((acc, monthRevenue) => acc + parseFloat(monthRevenue), 0);
+            const totalRevenue = Object.values(revenueData).reduce((acc, monthRevenue) => acc + parseFloat(monthRevenue) / 100, 0);
             const formattedTotalRevenue = totalRevenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             $('#total_sales').text(`₱ ${formattedTotalRevenue}`);
         })

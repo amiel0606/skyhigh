@@ -9,7 +9,7 @@ if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
 
 $user_id = $_GET['user_id'];
 
-$sql = "SELECT msg_id, message, sender, receiver, timestamp 
+$sql = "SELECT msg_id, message, sender, receiver, timestamp, type
         FROM tbl_messages
         WHERE (receiver = ? AND sender = 'admin') 
         OR (sender = ? AND receiver = 'admin')
@@ -34,7 +34,8 @@ while ($row = mysqli_fetch_assoc($result)) {
         'sender' => $row['sender'],
         'receiver' => $row['receiver'],
         'timestamp' => $row['timestamp'],
-        'isFromAdmin' => ($row['sender'] === 'admin')
+        'isFromAdmin' => ($row['sender'] === 'admin'),
+        'type' => $row['type']
     ];
 }
 
