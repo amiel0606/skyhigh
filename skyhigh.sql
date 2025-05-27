@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3360
--- Generation Time: May 01, 2025 at 06:42 PM
+-- Host: 127.0.0.1
+-- Generation Time: May 27, 2025 at 04:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,13 +61,6 @@ CREATE TABLE `tbl_appointments` (
   `cancellation_reason` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `tbl_appointments`
---
-
-INSERT INTO `tbl_appointments` (`a_id`, `name`, `username`, `address`, `contact`, `vehicle`, `service`, `date`, `time`, `status`, `type`, `cancellation_reason`) VALUES
-(17, 'Plato Bryant', 'xafecacy@mailinator.com', 'Veniam velit ea nu', '09940576891', 'Dolores aut ad dolor', 'Eius mollitia culpa ', '2025-04-30', '12:00', 'Confirmed', 'Walk-in', '');
-
 -- --------------------------------------------------------
 
 --
@@ -84,7 +77,7 @@ CREATE TABLE `tbl_brands` (
 --
 
 INSERT INTO `tbl_brands` (`b_id`, `brand_name`) VALUES
-(2, 'ssww');
+(2, 'HAHA');
 
 -- --------------------------------------------------------
 
@@ -103,6 +96,13 @@ CREATE TABLE `tbl_carts` (
   `transID` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tbl_carts`
+--
+
+INSERT INTO `tbl_carts` (`c_id`, `user_id`, `product_id`, `product_name`, `product_price`, `quantity`, `status`, `transID`) VALUES
+(21, 37, 11, 'zsxczxczx', 2000, 1, 'Paid', 'pi_21qAHTrPVDKsnKuN8B2VhMzm');
+
 -- --------------------------------------------------------
 
 --
@@ -115,7 +115,8 @@ CREATE TABLE `tbl_messages` (
   `sender` varchar(255) NOT NULL,
   `message` longtext NOT NULL,
   `is_seen` tinyint(1) NOT NULL DEFAULT 0,
-  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  `type` enum('text','image') DEFAULT 'text'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -135,6 +136,32 @@ CREATE TABLE `tbl_products` (
   `status` varchar(255) NOT NULL DEFAULT 'available',
   `image` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_products`
+--
+
+INSERT INTO `tbl_products` (`product_id`, `product_name`, `product_desc`, `price`, `product_category`, `brand`, `stock`, `status`, `image`) VALUES
+(11, 'qweqweqweqwewqeqweqw', 'asdawe', 321, 'ahah', '2', 2, 'Available', 'product_681de4ab53c1b3.44993369.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_services`
+--
+
+CREATE TABLE `tbl_services` (
+  `s_id` int(11) NOT NULL,
+  `service_name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_services`
+--
+
+INSERT INTO `tbl_services` (`s_id`, `service_name`, `description`) VALUES
+(2, 'hahahahaweqeqeqwe', 'zzzqweqew');
 
 -- --------------------------------------------------------
 
@@ -176,7 +203,31 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`uID`, `username`, `name`, `password`, `role`, `contact`, `address`, `verified`, `otp`, `otp_expiry`) VALUES
-(37, 'amiellapid06@gmail.com', 'Amiel Carhyl Lapid', '$2y$10$QtHhKU7wzgEaTMP.L0TbyefFjsxpTWULMuvlYBkidp023TDi4Drwi', 'customer', '09940576781', 'emoz sabana', 'true', 223575, '2025-02-21 02:22:09');
+(37, 'amiellapid22@gmail.com', 'nigga akow', '$2y$10$.jbr93fTfpyqwY48l.SGpOovvTnu7qCunxeL/EEhPMYES446Dn3Ya', 'customer', '09289703176', 'zzzaw', 'true', 223575, '2025-02-21 02:22:09');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `website_content`
+--
+
+CREATE TABLE `website_content` (
+  `id` int(11) NOT NULL,
+  `about_us` text DEFAULT NULL,
+  `logo_title` varchar(255) DEFAULT NULL,
+  `logo_subtitle` varchar(255) DEFAULT NULL,
+  `logo_picture` varchar(255) DEFAULT NULL,
+  `background_picture` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `website_content`
+--
+
+INSERT INTO `website_content` (`id`, `about_us`, `logo_title`, `logo_subtitle`, `logo_picture`, `background_picture`, `created_at`, `updated_at`) VALUES
+(1, '<p><span style=\"background-color:hsl(180,75%,60%);color:hsl(210,75%,60%);font-size:30px;\"><strong>ahahahawazxxzxz</strong></span></p>', '<p>qweqweqwe</p>', '<p>qwewqeqeqwewqe</p>', 'logo_1748309514_6835160ac2e20.png', 'background_1748309514_6835160ac32c1.png', '2025-05-27 00:53:27', '2025-05-27 01:41:45');
 
 --
 -- Indexes for dumped tables
@@ -220,6 +271,12 @@ ALTER TABLE `tbl_products`
   ADD PRIMARY KEY (`product_id`);
 
 --
+-- Indexes for table `tbl_services`
+--
+ALTER TABLE `tbl_services`
+  ADD PRIMARY KEY (`s_id`);
+
+--
 -- Indexes for table `tbl_transactions`
 --
 ALTER TABLE `tbl_transactions`
@@ -230,6 +287,12 @@ ALTER TABLE `tbl_transactions`
 --
 ALTER TABLE `tbl_users`
   ADD PRIMARY KEY (`uID`);
+
+--
+-- Indexes for table `website_content`
+--
+ALTER TABLE `website_content`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -245,7 +308,7 @@ ALTER TABLE `tbl_admin`
 -- AUTO_INCREMENT for table `tbl_appointments`
 --
 ALTER TABLE `tbl_appointments`
-  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `a_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tbl_brands`
@@ -257,31 +320,43 @@ ALTER TABLE `tbl_brands`
 -- AUTO_INCREMENT for table `tbl_carts`
 --
 ALTER TABLE `tbl_carts`
-  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `c_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `tbl_messages`
 --
 ALTER TABLE `tbl_messages`
-  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `msg_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `tbl_products`
 --
 ALTER TABLE `tbl_products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `tbl_services`
+--
+ALTER TABLE `tbl_services`
+  MODIFY `s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_transactions`
 --
 ALTER TABLE `tbl_transactions`
-  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `t_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `uID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `uID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT for table `website_content`
+--
+ALTER TABLE `website_content`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

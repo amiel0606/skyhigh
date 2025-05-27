@@ -5,25 +5,86 @@ include_once './includes/header.php';
     .content {
         width: 1200px;
     }
+    
+    .about-content {
+        line-height: 1.6;
+    }
+    
+    .about-content h1, .about-content h2, .about-content h3, .about-content h4, .about-content h5, .about-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .about-content p {
+        margin-bottom: 1rem;
+    }
+    
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 
 <p class="is-size-2 has-text-weight-bold">About Us.</p>
-<p class="ml-6 is-size-5">Welcome to SkyHigh Motorcycle Parts Trading located in located at Zone 2, Don Placido Campus
-    Avenue, Guevara Street, Dasmarinas Cavite, your trusted destination for top-quality motorcycle services and parts.
-    Whether you're a weekend rider or a daily commuter, we’re here to keep your bike in peak condition with expert
-    repairs, maintenance, and a vast selection of premium parts. <br> <br>
+<div id="aboutUsContent" class="ml-6 is-size-5 about-content">
+    <div class="loading-spinner"></div> Loading content...
+</div>
 
-    Why Choose Us? <br>
-    Expert Service – Our skilled mechanics have years of experience handling all types of motorcycles. <br> <br>
-    Quality Parts: We stock only the best OEM and aftermarket parts to enhance your bike’s performance and longevity. <br> <br>
-    Customer-Centered Approach – Your satisfaction is our priority, and we’re committed to providing fast, reliable, and
-    affordable service.  <br> <br>
+<script>
+function loadAboutContent() {
+    const content = window.getWebsiteContent();
+    if (content) {
+        updateAboutContent(content);
+    } else {
+        setTimeout(() => {
+            const content = window.getWebsiteContent();
+            if (content) {
+                updateAboutContent(content);
+            } else {
+                fetch('./controllers/getContent.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateAboutContent(data.data);
+                        } else {
+                            document.getElementById('aboutUsContent').innerHTML = 
+                                'Welcome to SkyHigh Motorcycle - your premier destination for motorcycle services and parts.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading about content:', error);
+                        document.getElementById('aboutUsContent').innerHTML = 
+                            'Welcome to SkyHigh Motorcycle - your premier destination for motorcycle services and parts.';
+                    });
+            }
+        }, 500);
+    }
+}
 
-    At SkyHigh Motorcycle Parts Trading, we don’t just fix bikes—we fuel your passion for riding. Ride with confidence,
-    knowing you have a dedicated team behind you. <br> <br>
+// Function to update about content
+function updateAboutContent(content) {
+    const aboutContainer = document.getElementById('aboutUsContent');
+    if (aboutContainer && content.about_us) {
+        aboutContainer.innerHTML = content.about_us;
+    }
+}
 
-    <span class="ml-6 is-italic is-size-4">Keep your bike running strong—because every ride matters!</span> 
-</p>
+// Load content when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadAboutContent();
+});
+</script>
+
 <script src="./js/changeWindows.js"></script>
 
 <?php

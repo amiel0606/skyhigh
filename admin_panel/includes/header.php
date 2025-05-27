@@ -75,6 +75,8 @@ if (!isset($_SESSION['admin_id'])) {
             <ul class="menu-list">
                 <li><a href="./index.php"><i class="fa-solid fa-house mr-6"></i>Dashboard</a></li>
                 <li><a href="./inventory.php"><i class="fa-solid fa-gear mr-6"></i>Inventory</a></li>
+                <li><a href="./customers.php"><i class="fa-solid fa-users mr-6"></i>Customers</a></li>
+                <li><a href="./content.php"><i class="fa-solid fa-edit mr-6"></i>Content Management</a></li>
             </ul>
         </aside>
     </div>

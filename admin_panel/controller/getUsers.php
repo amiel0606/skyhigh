@@ -2,12 +2,7 @@
 session_start();
 include_once('./dbCon.php');
 
-$sql = "SELECT DISTINCT u.uID, u.name 
-        FROM tbl_users u
-        INNER JOIN tbl_messages m ON u.uID = m.sender OR u.uID = m.receiver
-        WHERE u.uID != 'admin'
-        ORDER BY u.name ASC";
-
+$sql = "SELECT * FROM tbl_users";
 $result = mysqli_query($conn, $sql);
 
 if (!$result) {
@@ -17,10 +12,8 @@ if (!$result) {
 
 $users = [];
 while ($row = mysqli_fetch_assoc($result)) {
-    $users[] = [
-        'uID' => $row['uID'],
-        'name' => htmlspecialchars($row['name'])
-    ];
+    unset($row['password']);
+    $users[] = $row;
 }
 
 echo json_encode([

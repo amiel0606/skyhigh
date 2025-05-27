@@ -232,6 +232,40 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
 </div>
 
+<!-- Service Modal -->
+<div id="serviceModal" class="modal">
+    <div class="modal-background" onclick="closeServiceModal()"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="serviceModalTitle">Add Service</p>
+            <button class="delete" aria-label="close" onclick="closeServiceModal()"></button>
+        </header>
+
+        <form id="serviceForm">
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">Service Name</label>
+                    <div class="control">
+                        <input class="input" type="text" id="serviceNameInput" name="service_name" required>
+                        <input type="hidden" id="serviceIdInput" name="service_id">
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Description</label>
+                    <div class="control">
+                        <textarea class="textarea" id="serviceDescInput" name="service_description" required></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="modal-card-foot">
+                <button class="button is-success" type="submit">Save</button>
+                <button class="button" type="button" onclick="closeServiceModal()">Cancel</button>
+            </footer>
+        </form>
+    </div>
+</div>
 
 <section class="section">
     <div class="container">
@@ -239,6 +273,7 @@ window.addEventListener('DOMContentLoaded', () => {
             <ul>
                 <li id="tab-products"><a href="#" onclick="showTab('products')">Products</a></li>
                 <li id="tab-brands"><a href="#" onclick="showTab('brands')">Brands</a></li>
+                <li id="tab-services"><a href="#" onclick="showTab('services')">Services</a></li>
             </ul>
         </nav>
 
@@ -307,6 +342,7 @@ window.addEventListener('DOMContentLoaded', () => {
             <ul>
                 <li id="tab-products"><a href="#" onclick="showTab('products')">Products</a></li>
                 <li class="is-active" id="tab-brands"><a href="#" onclick="showTab('brands')">Brands</a></li>
+                <li id="tab-services"><a href="#" onclick="showTab('services')">Services</a></li>
             </ul>
         </nav>
         <div class="is-flex is-align-items-center is-justify-content-space-between">
@@ -329,6 +365,36 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
 </section>
 
+<section class="section" id="servicesSection" style="display: none;">
+    <div class="container">
+        <nav class="breadcrumb is-medium" aria-label="breadcrumbs" style="margin-bottom: 1rem;">
+            <ul>
+                <li id="tab-products"><a href="#" onclick="showTab('products')">Products</a></li>
+                <li id="tab-brands"><a href="#" onclick="showTab('brands')">Brands</a></li>
+                <li class="is-active" id="tab-services"><a href="#" onclick="showTab('services')">Services</a></li>
+            </ul>
+        </nav>
+        <div class="is-flex is-align-items-center is-justify-content-space-between">
+            <h1 class="title">Services</h1>
+            <button class="button is-small is-primary" onclick="openServiceModal()">Add Service</button>
+        </div>
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped" id="servicesTable">
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="servicesTableBody">
+                    <!-- Service data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
 <script src="../node_modules/axios/dist/axios.min.js"></script>
 
 <script>
@@ -338,6 +404,11 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('brandForm').addEventListener('submit', function (e) {
             e.preventDefault();
             submitBrandForm();
+        });
+
+        document.getElementById('serviceForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitServiceForm();
         });
     });
     function toggleStatus(button) {
@@ -513,14 +584,26 @@ window.addEventListener('DOMContentLoaded', () => {
         if (tab === 'products') {
             document.querySelector('#tab-products').classList.add('is-active');
             document.querySelector('#tab-brands').classList.remove('is-active');
+            document.querySelector('#tab-services').classList.remove('is-active');
             document.querySelector('section.section').style.display = '';
             document.querySelector('#brandsSection').style.display = 'none';
-        } else {
+            document.querySelector('#servicesSection').style.display = 'none';
+        } else if (tab === 'brands') {
             document.querySelector('#tab-products').classList.remove('is-active');
             document.querySelector('#tab-brands').classList.add('is-active');
+            document.querySelector('#tab-services').classList.remove('is-active');
             document.querySelector('section.section').style.display = 'none';
             document.querySelector('#brandsSection').style.display = '';
+            document.querySelector('#servicesSection').style.display = 'none';
             fetchBrands();
+        } else if (tab === 'services') {
+            document.querySelector('#tab-products').classList.remove('is-active');
+            document.querySelector('#tab-brands').classList.remove('is-active');
+            document.querySelector('#tab-services').classList.add('is-active');
+            document.querySelector('section.section').style.display = 'none';
+            document.querySelector('#brandsSection').style.display = 'none';
+            document.querySelector('#servicesSection').style.display = '';
+            fetchServices();
         }
     }
 
@@ -564,7 +647,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(() => {
-                $('#brandsTableBody').html('<tr><td colspan="2">Error fetching data.</td></tr>');
+                $('#servicesTable').html('<tr><td colspan="2">Error fetching data.</td></tr>');
             });
     }
 
@@ -621,6 +704,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function escapeHtml(text) {
+        if (typeof text !== 'string') return '';
         return text.replace(/[&<>"']/g, function (match) {
             const map = {
                 '&': '&amp;',
@@ -651,7 +735,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // View Product Image in Modal
     function viewProductImage(imageUrl) {
-        // Create modal if it doesn't exist
         if (!document.getElementById('viewImageModal')) {
             const modalHtml = `
                 <div class="modal" id="viewImageModal">
@@ -700,12 +783,106 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Trigger file input
         document.body.appendChild(fileInput);
         fileInput.click();
-        // Remove input after use
         fileInput.addEventListener('blur', function () {
             document.body.removeChild(fileInput);
+        });
+    }
+
+    // Service Management Functions
+    function fetchServices() {
+
+        const $tbody = $('#servicesTableBody');
+        $tbody.empty();
+        axios.get('./controller/fetchServices.php')
+            .then(function (response) {
+                const services = response.data;
+                const $tbody = $('#servicesTableBody');
+                $tbody.empty();
+
+                if (services.length > 0) {
+                    services.forEach(service => {
+                        const $row = $('<tr></tr>');
+                        $row.append(`<td>${escapeHtml(service.service_name)}</td>`);
+                        $row.append(`<td>${escapeHtml(service.description)}</td>`);
+
+                        const $actions = $('<td></td>');
+
+                        const $editBtn = $('<button class="button is-small is-info">Edit</button>');
+                        $editBtn.on('click', () => openServiceModal(true, service));
+
+                        const $deleteBtn = $('<button class="button is-small is-danger">Delete</button>');
+                        $deleteBtn.on('click', () => deleteService(service.s_id));
+
+                        $actions.append($editBtn, ' ', $deleteBtn);
+                        $row.append($actions);
+                        $tbody.append($row);
+                    });
+                } else {
+                    $tbody.html('<tr><td colspan="3">No services found.</td></tr>');
+                }
+            })
+            .catch(() => {
+                $('#servicesTableBody').html('<tr><td colspan="3">Error fetching data.</td></tr>');
+            });
+    }
+
+    function openServiceModal(isEdit = false, service = null) {
+        $('#serviceModalTitle').text(isEdit ? 'Edit Service' : 'Add Service');
+        $('#serviceNameInput').val(isEdit ? service.service_name : '');
+        $('#serviceDescInput').val(isEdit ? service.description : '');
+        $('#serviceIdInput').val(isEdit ? service.s_id : '');
+        $('#serviceModal').addClass('is-active');
+    }
+
+    function closeServiceModal() {
+        document.getElementById('serviceForm').reset();
+        $('#serviceIdInput').val('');
+        $('#serviceModal').removeClass('is-active');
+    }
+
+    function submitServiceForm() {
+        const serviceName = $('#serviceNameInput').val().trim();
+        const serviceDesc = $('#serviceDescInput').val().trim();
+        const serviceId = $('#serviceIdInput').val();
+        
+        if (!serviceName) return alert('Service name is required.');
+        if (!serviceDesc) return alert('Service description is required.');
+
+        const url = serviceId ? './controller/updateService.php' : './controller/addService.php';
+        axios.post(url, {
+            service_name: serviceName,
+            service_description: serviceDesc,
+            service_id: serviceId
+        })
+            .then(() => {
+                showNotification(serviceId ? 'Service updated successfully!' : 'Service added successfully!', 'is-success');
+                closeServiceModal();
+                fetchServices();
+            })
+            .catch(() => {
+                showNotification("Error saving service.", 'is-danger');
+            });
+    }
+
+    function deleteService(serviceId) {
+        if (!confirm("Are you sure you want to delete this service?")) return;
+
+        axios.post('./controller/deleteService.php', {
+            service_id: serviceId
+        })
+        .then(response => {
+            const data = response.data;
+            if (data.success) {
+                showNotification(data.message, 'is-success');
+                fetchServices();
+            } else {
+                showNotification(data.message, 'is-danger');
+            }
+        })
+        .catch(() => {
+            showNotification("Error deleting service.", 'is-danger');
         });
     }
 </script>

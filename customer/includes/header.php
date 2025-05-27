@@ -2,7 +2,6 @@
 session_start();
 date_default_timezone_set('Asia/Manila');
 $today = date(format: 'Y-m-d');
-
 ?>
 
 <!DOCTYPE html>
@@ -49,6 +48,7 @@ $today = date(format: 'Y-m-d');
             --bulma-primary-l: 55%;
             --bulma-warning-h: 46deg;
             --bulma-warning-l: 50%;
+            --background-image: url('../img/background-home.png');
         }
 
         body {
@@ -123,7 +123,7 @@ $today = date(format: 'Y-m-d');
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('../img/background-home.png');
+            background-image: var(--background-image);
             background-size: cover;
             background-position: center;
             opacity: 0.35;
@@ -203,10 +203,10 @@ $today = date(format: 'Y-m-d');
         <div class="container-fluid">
             <a href="./index.php">
                 <div class="d-flex align-items-center">
-                    <img src="../img/logo.png" alt="Logo" class="me-2 logo-img">
+                    <img id="logoImage" src="../img/logo.png" alt="Logo" class="me-2 logo-img">
                     <div class="logo-container">
-                        <span class="logo-text logo-text-skyhigh">SKYHIGH</span>
-                        <span class="logo-text logo-text-motorcycle">MOTORCYCLE</span>
+                        <span id="logoTitle" class="logo-text logo-text-skyhigh">SKYHIGH</span>
+                        <span id="logoSubtitle" class="logo-text logo-text-motorcycle">MOTORCYCLE</span>
                     </div>
                     <span class="middle-text">Parts/Trading</span>
                 </div>
@@ -365,3 +365,87 @@ $today = date(format: 'Y-m-d');
                     </section>
                 </div>
             </div>
+
+<script>
+let websiteContent = null;
+
+function loadWebsiteContent() {
+    fetch('./controllers/getContent.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                websiteContent = data.data;
+                updatePageContent();
+            } else {
+                console.error('Failed to load website content:', data.message);
+                websiteContent = {
+                    about_us: 'Welcome to SkyHigh Motorcycle - your premier destination for motorcycle services and parts.',
+                    logo_title: 'SKYHIGH',
+                    logo_subtitle: 'MOTORCYCLE',
+                    logo_picture_url: '../img/logo.png',
+                    background_picture_url: '../img/background-home.png'
+                };
+                updatePageContent();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading website content:', error);
+            websiteContent = {
+                about_us: 'Welcome to SkyHigh Motorcycle - your premier destination for motorcycle services and parts.',
+                logo_title: 'SKYHIGH',
+                logo_subtitle: 'MOTORCYCLE',
+                logo_picture_url: '../img/logo.png',
+                background_picture_url: '../img/background-home.png'
+            };
+            updatePageContent();
+        });
+}
+
+function updatePageContent() {
+    if (!websiteContent) return;
+    
+    const logoImage = document.getElementById('logoImage');
+    if (logoImage) {
+        logoImage.src = websiteContent.logo_picture_url;
+    }
+    
+    const logoTitle = document.getElementById('logoTitle');
+    if (logoTitle) {
+        logoTitle.textContent = stripHtmlTags(websiteContent.logo_title);
+    }
+    
+    const logoSubtitle = document.getElementById('logoSubtitle');
+    if (logoSubtitle) {
+        logoSubtitle.textContent = stripHtmlTags(websiteContent.logo_subtitle);
+    }
+    
+    if (websiteContent.background_picture_url) {
+        document.documentElement.style.setProperty('--background-image', `url('${websiteContent.background_picture_url}')`);
+    }
+    
+    const aboutContent = document.getElementById('aboutUsContent');
+    if (aboutContent) {
+        aboutContent.innerHTML = websiteContent.about_us;
+    }
+}
+
+function stripHtmlTags(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadWebsiteContent();
+});
+
+window.getWebsiteContent = function() {
+    return websiteContent;
+};
+
+window.refreshWebsiteContent = function() {
+    loadWebsiteContent();
+};
+</script>
+</body>
+</html>
