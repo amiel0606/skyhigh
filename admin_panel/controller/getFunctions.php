@@ -391,3 +391,15 @@ function getTotalAppointmentsAllMonths()
     $result = $conn->query($sql);
     return $result->fetch_assoc()['total_appointments'];
 }
+
+function getServiceBookingsCount()
+{
+    global $conn;
+    $sql = "SELECT service, COUNT(*) AS count FROM tbl_appointments WHERE status IN ('Confirmed', 'Completed') GROUP BY service ORDER BY count DESC";
+    $result = $conn->query($sql);
+    $serviceCounts = [];
+    while ($row = $result->fetch_assoc()) {
+        $serviceCounts[$row['service']] = (int)$row['count'];
+    }
+    return $serviceCounts;
+}

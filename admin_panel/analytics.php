@@ -184,6 +184,7 @@ if (!isset($_SESSION['admin_id'])) {
             </select>
             <canvas id="appointmentsChart" width="400" height="200"></canvas>
             <canvas id="revenueChart" width="400" height="200"></canvas>
+            <canvas id="serviceBookingsChart" width="400" height="200"></canvas>
         </div>
     </div>
 </section>
@@ -196,6 +197,7 @@ if (!isset($_SESSION['admin_id'])) {
 
     let appointmentsChartInstance = null;
     let revenueChartInstance = null;
+    let serviceBookingsChartInstance = null;
 
     // Fetch analytics metrics
     async function fetchAnalyticsData() {
@@ -382,8 +384,62 @@ if (!isset($_SESSION['admin_id'])) {
         });
     }
 
+    async function fetchServiceBookingsData() {
+        try {
+            const response = await axios.get('./controller/getAnalyticsData.php?serviceBookings=1');
+            const data = response.data;
+            updateServiceBookingsChart(data);
+        } catch (error) {
+            console.error('Error fetching service bookings data', error);
+        }
+    }
+
+    function updateServiceBookingsChart(serviceBookingsData) {
+        const ctx = document.getElementById('serviceBookingsChart').getContext('2d');
+        const labels = Object.keys(serviceBookingsData);
+        const data = Object.values(serviceBookingsData);
+        if (serviceBookingsChartInstance) {
+            serviceBookingsChartInstance.destroy();
+        }
+        serviceBookingsChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Bookings per Service',
+                    backgroundColor: 'rgb(54, 162, 235)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    data: data
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
     // Initialize data
     fetchAnalyticsData();
     fetchData();
+    fetchServiceBookingsData();
 </script>
 <?php include_once('./includes/footer.php'); ?>

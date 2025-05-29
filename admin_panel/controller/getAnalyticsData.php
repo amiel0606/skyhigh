@@ -4,6 +4,11 @@ include_once('./getFunctions.php');
 
 header('Content-Type: application/json');
 
+if (isset($_GET['serviceBookings']) && $_GET['serviceBookings'] == '1') {
+    echo json_encode(getServiceBookingsCount());
+    exit();
+}
+
 try {
     $analyticsData = [
         'totalOrders' => getTotalOrders(),
