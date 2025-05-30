@@ -44,6 +44,14 @@ include_once('./controller/getContent.php');
                             </div>
                         </div>
 
+                        <!-- FAQs Section -->
+                        <div class="field">
+                            <label class="label">FAQs</label>
+                            <div class="control">
+                                <div id="faqs"><?php echo $content['faqs'] ?? ''; ?></div>
+                            </div>
+                        </div>
+
                         <!-- Logo Picture Upload -->
                         <div class="field">
                             <label class="label">Logo Picture</label>
@@ -133,7 +141,7 @@ include_once('./controller/getContent.php');
 
 <script>
 // Initialize CKEditor for each textarea
-let aboutUsEditor, logoTitleEditor, logoSubtitleEditor;
+let aboutUsEditor, logoTitleEditor, logoSubtitleEditor, faqsEditor;
 
 // About Us Editor with full features
 DecoupledEditor
@@ -529,6 +537,184 @@ DecoupledEditor
         console.error('Error loading Logo Subtitle editor:', error);
     });
 
+// FAQs Editor
+DecoupledEditor
+    .create(document.querySelector('#faqs'), {
+        toolbar: [
+            'heading', '|',
+            'fontSize', 'fontFamily', '|',
+            'fontColor', 'fontBackgroundColor', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'alignment', '|',
+            'numberedList', 'bulletedList', '|',
+            'outdent', 'indent', '|',
+            'link', 'blockQuote', 'insertTable', '|',
+            'undo', 'redo'
+        ],
+        fontSize: {
+            options: [
+                9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36
+            ]
+        },
+        fontFamily: {
+            options: [
+                'default',
+                'Arial, Helvetica, sans-serif',
+                'Courier New, Courier, monospace',
+                'Georgia, serif',
+                'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                'Tahoma, Geneva, sans-serif',
+                'Times New Roman, Times, serif',
+                'Trebuchet MS, Helvetica, sans-serif',
+                'Verdana, Geneva, sans-serif'
+            ]
+        },
+        fontColor: {
+            colors: [
+                {
+                    color: 'hsl(0, 0%, 0%)',
+                    label: 'Black'
+                },
+                {
+                    color: 'hsl(0, 0%, 30%)',
+                    label: 'Dim grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 60%)',
+                    label: 'Grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 90%)',
+                    label: 'Light grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 100%)',
+                    label: 'White',
+                    hasBorder: true
+                },
+                {
+                    color: 'hsl(0, 75%, 60%)',
+                    label: 'Red'
+                },
+                {
+                    color: 'hsl(30, 75%, 60%)',
+                    label: 'Orange'
+                },
+                {
+                    color: 'hsl(60, 75%, 60%)',
+                    label: 'Yellow'
+                },
+                {
+                    color: 'hsl(90, 75%, 60%)',
+                    label: 'Light green'
+                },
+                {
+                    color: 'hsl(120, 75%, 60%)',
+                    label: 'Green'
+                },
+                {
+                    color: 'hsl(150, 75%, 60%)',
+                    label: 'Aquamarine'
+                },
+                {
+                    color: 'hsl(180, 75%, 60%)',
+                    label: 'Turquoise'
+                },
+                {
+                    color: 'hsl(210, 75%, 60%)',
+                    label: 'Light blue'
+                },
+                {
+                    color: 'hsl(240, 75%, 60%)',
+                    label: 'Blue'
+                },
+                {
+                    color: 'hsl(270, 75%, 60%)',
+                    label: 'Purple'
+                }
+            ]
+        },
+        fontBackgroundColor: {
+            colors: [
+                {
+                    color: 'hsl(0, 0%, 0%)',
+                    label: 'Black'
+                },
+                {
+                    color: 'hsl(0, 0%, 30%)',
+                    label: 'Dim grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 60%)',
+                    label: 'Grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 90%)',
+                    label: 'Light grey'
+                },
+                {
+                    color: 'hsl(0, 0%, 100%)',
+                    label: 'White',
+                    hasBorder: true
+                },
+                {
+                    color: 'hsl(0, 75%, 60%)',
+                    label: 'Red'
+                },
+                {
+                    color: 'hsl(30, 75%, 60%)',
+                    label: 'Orange'
+                },
+                {
+                    color: 'hsl(60, 75%, 60%)',
+                    label: 'Yellow'
+                },
+                {
+                    color: 'hsl(90, 75%, 60%)',
+                    label: 'Light green'
+                },
+                {
+                    color: 'hsl(120, 75%, 60%)',
+                    label: 'Green'
+                },
+                {
+                    color: 'hsl(150, 75%, 60%)',
+                    label: 'Aquamarine'
+                },
+                {
+                    color: 'hsl(180, 75%, 60%)',
+                    label: 'Turquoise'
+                },
+                {
+                    color: 'hsl(210, 75%, 60%)',
+                    label: 'Light blue'
+                },
+                {
+                    color: 'hsl(240, 75%, 60%)',
+                    label: 'Blue'
+                },
+                {
+                    color: 'hsl(270, 75%, 60%)',
+                    label: 'Purple'
+                }
+            ]
+        }
+    })
+    .then(editor => {
+        faqsEditor = editor;
+        
+        // Add toolbar to the page
+        const toolbarContainer = document.createElement('div');
+        toolbarContainer.id = 'faqs-toolbar';
+        document.querySelector('#faqs').parentNode.insertBefore(toolbarContainer, document.querySelector('#faqs'));
+        toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+        
+        console.log('FAQs editor loaded successfully');
+    })
+    .catch(error => {
+        console.error('Error loading FAQs editor:', error);
+    });
+
 // File input handlers
 document.getElementById('logoPicture').addEventListener('change', function(e) {
     const fileName = e.target.files[0]?.name || 'No file selected';
@@ -548,6 +734,7 @@ document.getElementById('contentForm').addEventListener('submit', function(e) {
     formData.append('aboutUs', aboutUsEditor.getData());
     formData.append('logoTitle', logoTitleEditor.getData());
     formData.append('logoSubtitle', logoSubtitleEditor.getData());
+    formData.append('faqs', faqsEditor.getData());
     
     // Add files if selected
     const logoFile = document.getElementById('logoPicture').files[0];

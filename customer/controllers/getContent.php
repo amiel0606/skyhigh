@@ -13,6 +13,7 @@ $defaultContent = [
     'about_us' => 'Welcome to SkyHigh Motorcycle - your premier destination for motorcycle services and parts.',
     'logo_title' => 'SKYHIGH',
     'logo_subtitle' => 'MOTORCYCLE',
+    'faqs' => '<h3>Frequently Asked Questions</h3><p><strong>Q: What services do you offer?</strong><br>A: We offer motorcycle repair, maintenance, parts sales, and customization services.</p><p><strong>Q: Do you work on all motorcycle brands?</strong><br>A: Yes, we work on all major motorcycle brands and models.</p>',
     'logo_picture' => '',
     'background_picture' => ''
 ];
@@ -32,6 +33,7 @@ try {
             'about_us' => $content['about_us'] ?? $defaultContent['about_us'],
             'logo_title' => $content['logo_title'] ?? $defaultContent['logo_title'],
             'logo_subtitle' => $content['logo_subtitle'] ?? $defaultContent['logo_subtitle'],
+            'faqs' => $content['faqs'] ?? $defaultContent['faqs'],
             'logo_picture' => $content['logo_picture'] ?? $defaultContent['logo_picture'],
             'background_picture' => $content['background_picture'] ?? $defaultContent['background_picture'],
             'logo_picture_url' => !empty($content['logo_picture']) ? $baseUrl . $content['logo_picture'] : '../img/logo.png',
@@ -42,6 +44,7 @@ try {
             'success' => true,
             'data' => $responseContent
         ]);
+        exit();
     } else {
         // Return default content if none exists
         echo json_encode([
@@ -51,6 +54,7 @@ try {
                 'background_picture_url' => '../img/background-home.png'
             ])
         ]);
+        exit();
     }
     
 } catch (Exception $e) {

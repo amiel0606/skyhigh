@@ -16,6 +16,7 @@ try {
     $aboutUs = $_POST['aboutUs'] ?? '';
     $logoTitle = $_POST['logoTitle'] ?? '';
     $logoSubtitle = $_POST['logoSubtitle'] ?? '';
+    $faqs = $_POST['faqs'] ?? '';
     
     // Handle file uploads
     $logoFileName = '';
@@ -93,6 +94,9 @@ try {
         $updateFields[] = "logo_subtitle = ?";
         $updateValues[] = $logoSubtitle;
         
+        $updateFields[] = "faqs = ?";
+        $updateValues[] = $faqs;
+        
         // Only update file fields if new files were uploaded
         if ($logoFileName) {
             $updateFields[] = "logo_picture = ?";
@@ -137,11 +141,11 @@ try {
         
     } else {
         // Insert new content
-        $insertQuery = "INSERT INTO website_content (about_us, logo_title, logo_subtitle, logo_picture, background_picture) VALUES (?, ?, ?, ?, ?)";
+        $insertQuery = "INSERT INTO website_content (about_us, logo_title, logo_subtitle, faqs, logo_picture, background_picture) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insertQuery);
         
         if ($stmt) {
-            $stmt->bind_param('sssss', $aboutUs, $logoTitle, $logoSubtitle, $logoFileName, $backgroundFileName);
+            $stmt->bind_param('ssssss', $aboutUs, $logoTitle, $logoSubtitle, $faqs, $logoFileName, $backgroundFileName);
             
             if ($stmt->execute()) {
                 echo json_encode(['success' => true, 'message' => 'Content created successfully']);
