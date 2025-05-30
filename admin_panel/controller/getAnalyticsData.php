@@ -4,8 +4,29 @@ include_once('./getFunctions.php');
 
 header('Content-Type: application/json');
 
+$startDate = isset($_GET['startDate']) ? $_GET['startDate'] : null;
+$endDate = isset($_GET['endDate']) ? $_GET['endDate'] : null;
+$detailed = isset($_GET['detailed']) ? $_GET['detailed'] : false;
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'month';
+
 if (isset($_GET['serviceBookings']) && $_GET['serviceBookings'] == '1') {
-    echo json_encode(getServiceBookingsCount());
+    if ($detailed) {
+        echo json_encode(getDetailedServiceBookingsData($startDate, $endDate));
+    } else if ($startDate && $endDate) {
+        echo json_encode(getServiceBookingsCountByDateRange($startDate, $endDate));
+    } else {
+        switch ($filter) {
+            case 'daily':
+                echo json_encode(getServiceBookingsCountByDay(30));
+                break;
+            case 'yearly':
+                echo json_encode(getServiceBookingsCountByYear());
+                break;
+            default:
+                echo json_encode(getServiceBookingsCount());
+                break;
+        }
+    }
     exit();
 }
 

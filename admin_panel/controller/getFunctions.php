@@ -403,3 +403,309 @@ function getServiceBookingsCount()
     }
     return $serviceCounts;
 }
+
+// New functions for date range filtering
+function getAppointmentsCountByDateRange($startDate, $endDate)
+{
+    global $conn;
+    $sql = "SELECT DATE(date) AS appointment_date, COUNT(DISTINCT a_id) AS appointments_count
+            FROM tbl_appointments
+            WHERE date BETWEEN ? AND ?
+            GROUP BY DATE(date)
+            ORDER BY DATE(date)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $appointments = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointments[$row['appointment_date']] = $row['appointments_count'];
+    }
+
+    return $appointments;
+}
+
+function getRevenueByDateRange($startDate, $endDate)
+{
+    global $conn;
+    $sql = "SELECT DATE(date) AS transaction_date, SUM(total) AS revenue
+            FROM tbl_transactions
+            WHERE date BETWEEN ? AND ? AND status = 'Paid'
+            GROUP BY DATE(date)
+            ORDER BY DATE(date)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $revenue = [];
+    while ($row = $result->fetch_assoc()) {
+        $revenue[$row['transaction_date']] = $row['revenue'];
+    }
+
+    return $revenue;
+}
+
+function getServiceBookingsCountByDateRange($startDate, $endDate)
+{
+    global $conn;
+    $sql = "SELECT service, COUNT(*) AS count 
+            FROM tbl_appointments 
+            WHERE status IN ('Confirmed', 'Completed') 
+            AND date BETWEEN ? AND ?
+            GROUP BY service 
+            ORDER BY count DESC";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $serviceCounts = [];
+    while ($row = $result->fetch_assoc()) {
+        $serviceCounts[$row['service']] = (int)$row['count'];
+    }
+    return $serviceCounts;
+}
+
+function getDetailedAppointmentsData($startDate = null, $endDate = null)
+{
+    global $conn;
+    $sql = "SELECT DATE(date) AS appointment_date, 
+                   name, username, service, vehicle, 
+                   time, status, type
+            FROM tbl_appointments";
+    
+    $params = [];
+    $types = "";
+    
+    if ($startDate && $endDate) {
+        $sql .= " WHERE date BETWEEN ? AND ?";
+        $params[] = $startDate;
+        $params[] = $endDate;
+        $types = "ss";
+    }
+    
+    $sql .= " ORDER BY date DESC, time DESC";
+    
+    if (!empty($params)) {
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
+        $result = $conn->query($sql);
+    }
+
+    $appointments = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointments[] = $row;
+    }
+
+    return $appointments;
+}
+
+function getDetailedRevenueData($startDate = null, $endDate = null)
+{
+    global $conn;
+    $sql = "SELECT DATE(t.date) AS transaction_date,
+                   t.payment_intent_id, t.total, t.status,
+                   u.name, u.username
+            FROM tbl_transactions t
+            INNER JOIN tbl_users u ON u.uID = t.user_id";
+    
+    $params = [];
+    $types = "";
+    
+    if ($startDate && $endDate) {
+        $sql .= " WHERE t.date BETWEEN ? AND ? AND t.status = 'Paid'";
+        $params[] = $startDate;
+        $params[] = $endDate;
+        $types = "ss";
+    } else {
+        $sql .= " WHERE t.status = 'Paid'";
+    }
+    
+    $sql .= " ORDER BY t.date DESC";
+    
+    if (!empty($params)) {
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
+        $result = $conn->query($sql);
+    }
+
+    $revenue = [];
+    while ($row = $result->fetch_assoc()) {
+        $revenue[] = $row;
+    }
+
+    return $revenue;
+}
+
+function getDetailedServiceBookingsData($startDate = null, $endDate = null)
+{
+    global $conn;
+    $sql = "SELECT service, 
+                   COUNT(*) AS total_bookings,
+                   COUNT(CASE WHEN status = 'Confirmed' THEN 1 END) AS confirmed,
+                   COUNT(CASE WHEN status = 'Completed' THEN 1 END) AS completed,
+                   COUNT(CASE WHEN status = 'Pending' THEN 1 END) AS pending,
+                   COUNT(CASE WHEN status = 'Declined' THEN 1 END) AS declined
+            FROM tbl_appointments";
+    
+    $params = [];
+    $types = "";
+    
+    if ($startDate && $endDate) {
+        $sql .= " WHERE date BETWEEN ? AND ?";
+        $params[] = $startDate;
+        $params[] = $endDate;
+        $types = "ss";
+    }
+    
+    $sql .= " GROUP BY service ORDER BY total_bookings DESC";
+    
+    if (!empty($params)) {
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
+        $result = $conn->query($sql);
+    }
+
+    $serviceData = [];
+    while ($row = $result->fetch_assoc()) {
+        $serviceData[] = $row;
+    }
+
+    return $serviceData;
+}
+
+// New functions for daily and yearly data
+function getAppointmentsCountByDay($days = 30)
+{
+    global $conn;
+    $sql = "SELECT DATE(date) AS appointment_date, COUNT(DISTINCT a_id) AS appointments_count
+            FROM tbl_appointments
+            WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+            GROUP BY DATE(date)
+            ORDER BY DATE(date)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $days);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $appointments = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointments[$row['appointment_date']] = $row['appointments_count'];
+    }
+
+    return $appointments;
+}
+
+function getRevenueByDay($days = 30)
+{
+    global $conn;
+    $sql = "SELECT DATE(date) AS transaction_date, SUM(total) AS revenue
+            FROM tbl_transactions
+            WHERE date >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND status = 'Paid'
+            GROUP BY DATE(date)
+            ORDER BY DATE(date)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $days);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $revenue = [];
+    while ($row = $result->fetch_assoc()) {
+        $revenue[$row['transaction_date']] = $row['revenue'];
+    }
+
+    return $revenue;
+}
+
+function getAppointmentsCountByYear()
+{
+    global $conn;
+    $sql = "SELECT YEAR(date) AS year, COUNT(DISTINCT a_id) AS appointments_count
+            FROM tbl_appointments
+            GROUP BY YEAR(date)
+            ORDER BY YEAR(date)";
+
+    $result = $conn->query($sql);
+
+    $appointments = [];
+    while ($row = $result->fetch_assoc()) {
+        $appointments[$row['year']] = $row['appointments_count'];
+    }
+
+    return $appointments;
+}
+
+function getRevenueByYear()
+{
+    global $conn;
+    $sql = "SELECT YEAR(date) AS year, SUM(total) AS revenue
+            FROM tbl_transactions
+            WHERE status = 'Paid'
+            GROUP BY YEAR(date)
+            ORDER BY YEAR(date)";
+
+    $result = $conn->query($sql);
+
+    $revenue = [];
+    while ($row = $result->fetch_assoc()) {
+        $revenue[$row['year']] = $row['revenue'];
+    }
+
+    return $revenue;
+}
+
+function getServiceBookingsCountByDay($days = 30)
+{
+    global $conn;
+    $sql = "SELECT service, COUNT(*) AS count 
+            FROM tbl_appointments 
+            WHERE status IN ('Confirmed', 'Completed') 
+            AND date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+            GROUP BY service 
+            ORDER BY count DESC";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $days);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $serviceCounts = [];
+    while ($row = $result->fetch_assoc()) {
+        $serviceCounts[$row['service']] = (int)$row['count'];
+    }
+    return $serviceCounts;
+}
+
+function getServiceBookingsCountByYear()
+{
+    global $conn;
+    $sql = "SELECT service, COUNT(*) AS count 
+            FROM tbl_appointments 
+            WHERE status IN ('Confirmed', 'Completed')
+            GROUP BY service 
+            ORDER BY count DESC";
+    
+    $result = $conn->query($sql);
+    
+    $serviceCounts = [];
+    while ($row = $result->fetch_assoc()) {
+        $serviceCounts[$row['service']] = (int)$row['count'];
+    }
+    return $serviceCounts;
+}

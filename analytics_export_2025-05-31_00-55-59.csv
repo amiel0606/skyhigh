@@ -1,0 +1,43 @@
+﻿"ANALYTICS SUMMARY REPORT"
+"Generated on: 2025-05-31 00:55:59"
+"Filter: Daily"
+
+"SUMMARY METRICS"
+Metric,Value
+"Total Orders",0
+"Total Revenue",₱0.00
+"Top Selling Item","No sales yet"
+"Top Service","CVT cleaning, change oil "
+"Most Scheduled Time",11:54
+"Most Scheduled Day",Thursday
+"Total Appointments",15
+"Active Users",6
+"Walk-in Appointments",1
+
+"APPOINTMENTS DATA"
+Date,Name,Username,Service,Vehicle,Time,Status,Type
+2025-06-05,"willie nelson manalo",wilsonmanalo010@gmail.com,"change oil ",motor,12:00,Confirmed,Online
+2025-06-02,Regie,rdollesin21@gmail.com,"CVT cleaning",scooter,11:54,Confirmed,Online
+2025-05-28,"willie nelson manalo",wilsonmanalo010@gmail.com,"change oil",motorycle,10:00,Declined,Online
+2025-05-28,Clarence,clarky321233@gmail.com,"Change oil",Motorcycle,10:00,Pending,Online
+2025-05-27,"Kevin paniterce",johnkevinpaniterce@gmail.com,"Change oil",Motorcycle,14:00,Pending,Online
+2025-05-21,Test1,regie0564@gmail.com,"Adjust chain",Motorcycle,16:14,Pending,Online
+2025-05-21,Test1,regie0564@gmail.com,"Replace Shock",Motorcycle,16:00,Pending,Online
+2025-05-21,user,usertest0518@gmail.com,"Change oil",Motorcycle,15:00,Confirmed,Online
+2025-05-21,Regie,rdollesin21@gmail.com,"Replace Shock",Motorcycle,14:00,Pending,Online
+2025-05-21,Regie,rdollesin21@gmail.com,"Tune up",Motorcycle,12:00,Pending,Online
+2025-05-21,Regie,rdollesin21@gmail.com,"Change oil",Motorcycle,11:00,Pending,Online
+2025-05-20,Test1,regie0564@gmail.com,"CVT cleaning",scooter,15:00,Pending,Walk-in
+2025-05-20,"Ben Barlow",benbarlow@gmail.com,"Change oil",Motorcycle,12:00,Pending,Online
+2025-05-15,Regie,rdollesin21@gmail.com,"engine refresh",scooter,18:01,Confirmed,Online
+2025-05-08,Regie,rdollesin21@gmail.com,"CVT cleaning",scooter,10:00,Confirmed,Online
+
+"SERVICE BOOKINGS DATA"
+Service,"Total Bookings",Confirmed,Completed,Pending,Declined
+"change oil",7,2,0,4,1
+"CVT cleaning",3,2,0,1,0
+"Replace Shock",2,0,0,2,0
+"Adjust chain",1,0,0,1,0
+"engine refresh",1,1,0,0,0
+"Tune up",1,0,0,1,0
+ 

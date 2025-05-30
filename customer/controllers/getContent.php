@@ -26,9 +26,7 @@ try {
     if ($result && $result->num_rows > 0) {
         $content = $result->fetch_assoc();
         
-        // Build response with full URLs for images
-        $baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/skyhigh/admin_panel/uploads/';
-        
+        // Build response with relative URLs for images
         $responseContent = [
             'about_us' => $content['about_us'] ?? $defaultContent['about_us'],
             'logo_title' => $content['logo_title'] ?? $defaultContent['logo_title'],
@@ -36,8 +34,8 @@ try {
             'faqs' => $content['faqs'] ?? $defaultContent['faqs'],
             'logo_picture' => $content['logo_picture'] ?? $defaultContent['logo_picture'],
             'background_picture' => $content['background_picture'] ?? $defaultContent['background_picture'],
-            'logo_picture_url' => !empty($content['logo_picture']) ? $baseUrl . $content['logo_picture'] : '../img/logo.png',
-            'background_picture_url' => !empty($content['background_picture']) ? $baseUrl . $content['background_picture'] : '../img/background-home.png'
+            'logo_picture_url' => !empty($content['logo_picture']) ? '../admin_panel/uploads/' . $content['logo_picture'] : '../img/logo.png',
+            'background_picture_url' => !empty($content['background_picture']) ? '../admin_panel/uploads/' . $content['background_picture'] : '../img/background-home.png'
         ];
         
         echo json_encode([

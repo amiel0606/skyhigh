@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: sql304.byetcluster.com
--- Generation Time: May 28, 2025 at 10:46 PM
+-- Generation Time: May 30, 2025 at 06:47 PM
 -- Server version: 10.6.19-MariaDB
 -- PHP Version: 7.2.22
 
@@ -301,11 +301,12 @@ INSERT INTO `tbl_users` (`uID`, `username`, `name`, `password`, `role`, `contact
 
 CREATE TABLE `website_content` (
   `id` int(11) NOT NULL,
-  `about_us` text DEFAULT NULL,
-  `logo_title` varchar(255) DEFAULT NULL,
-  `logo_subtitle` varchar(255) DEFAULT NULL,
-  `logo_picture` varchar(255) DEFAULT NULL,
-  `background_picture` varchar(255) DEFAULT NULL,
+  `about_us` longtext DEFAULT NULL,
+  `logo_title` longtext DEFAULT NULL,
+  `faq` longtext NOT NULL,
+  `logo_subtitle` longtext DEFAULT NULL,
+  `logo_picture` longtext DEFAULT NULL,
+  `background_picture` longtext DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -314,8 +315,8 @@ CREATE TABLE `website_content` (
 -- Dumping data for table `website_content`
 --
 
-INSERT INTO `website_content` (`id`, `about_us`, `logo_title`, `logo_subtitle`, `logo_picture`, `background_picture`, `created_at`, `updated_at`) VALUES
-(1, '<p><span style=\"background-color:hsl(180,75%,60%);color:hsl(210,75%,60%);font-size:30px;\"><strong>ahahahawazxxzxz</strong></span></p>', '<p>SKYHIGH</p>', '<p>MOTORCYCLE</p>', 'logo_1748309514_6835160ac2e20.png', 'background_1748309514_6835160ac32c1.png', '2025-05-27 00:53:27', '2025-05-28 02:57:52');
+INSERT INTO `website_content` (`id`, `about_us`, `logo_title`, `faq`, `logo_subtitle`, `logo_picture`, `background_picture`, `created_at`, `updated_at`) VALUES
+(1, '<p><span style=\"background-color:hsl(180,75%,60%);color:hsl(210,75%,60%);font-size:30px;\"><strong>ahahahawazxxzxz</strong></span></p>', '<p>SKYHIGH</p>', '', '<p>MOTORCYCLE</p>', 'logo_1748309514_6835160ac2e20.png', 'background_1748309514_6835160ac32c1.png', '2025-05-27 00:53:27', '2025-05-28 02:57:52');
 
 --
 -- Indexes for dumped tables

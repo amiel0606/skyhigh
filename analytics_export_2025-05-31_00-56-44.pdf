@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Analytics Report</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .section { margin-bottom: 30px; }
+            .section h2 { color: #333; border-bottom: 2px solid #3273dc; padding-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f5f5f5; font-weight: bold; }
+            .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .summary-item { padding: 10px; background-color: #f9f9f9; border-radius: 5px; }
+            .summary-label { font-weight: bold; color: #666; }
+            .summary-value { font-size: 1.2em; color: #333; }
+            @media print {
+                body { margin: 0; }
+                .section { page-break-inside: avoid; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Analytics Report</h1>
+            <p>Generated on: 2025-05-31 00:56:44</p><p>Filter: Daily</p></div><div class="section">
+            <h2>Summary Metrics</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">Total Orders</div>
+                    <div class="summary-value">0</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Revenue</div>
+                    <div class="summary-value">₱0.00</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Top Selling Item</div>
+                    <div class="summary-value">No sales yet</div>
+                </div>      <div class="summary-item">
+                    <div class="summary-label">Top Service</div>
+                    <div class="summary-value">CVT cleaning, change oil </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Most Scheduled Time</div>
+                    <div class="summary-value">11:54</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Most Scheduled Day</div>
+                    <div class="summary-value">Thursday</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Total Appointments</div>
+                    <div class="summary-value">15</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Active Users</div>
+                    <div class="summary-value">6</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Walk-in Appointments</div>
+                    <div class="summary-value">1</div>
+                </div>
+            </div>
+        </div><div class="section">
+                <h2>Appointments Data</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Service</th>
+                            <th>Vehicle</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr>
+                    <td>2025-06-05</td>
+                    <td>willie nelson manalo</td>
+                    <td>wilsonmanalo010@gmail.com</td>
+                    <td>change oil </td>
+                    <td>motor</td>
+                    <td>12:00</td>
+                    <td>Confirmed</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-06-02</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>CVT cleaning</td>
+                    <td>scooter</td>
+                    <td>11:54</td>
+                    <td>Confirmed</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-28</td>
+                    <td>willie nelson manalo</td>
+                    <td>wilsonmanalo010@gmail.com</td>
+                    <td>change oil</td>
+                    <td>motorycle</td>
+                    <td>10:00</td>
+                    <td>Declined</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-28</td>
+                    <td>Clarence</td>
+                    <td>clarky321233@gmail.com</td>
+                    <td>Change oil</td>
+                    <td>Motorcycle</td>
+                    <td>10:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-27</td>
+                    <td>Kevin paniterce</td>
+                    <td>johnkevinpaniterce@gmail.com</td>
+                    <td>Change oil</td>
+                    <td>Motorcycle</td>
+                    <td>14:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>Test1</td>
+                    <td>regie0564@gmail.com</td>
+                    <td>Adjust chain</td>
+                    <td>Motorcycle</td>
+                    <td>16:14</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>Test1</td>
+                    <td>regie0564@gmail.com</td>
+                    <td>Replace Shock</td>
+                    <td>Motorcycle</td>
+                    <td>16:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>user</td>
+                    <td>usertest0518@gmail.com</td>
+                    <td>Change oil</td>
+                    <td>Motorcycle</td>
+                    <td>15:00</td>
+                    <td>Confirmed</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>Replace Shock</td>
+                    <td>Motorcycle</td>
+                    <td>14:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>Tune up</td>
+                    <td>Motorcycle</td>
+                    <td>12:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-21</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>Change oil</td>
+                    <td>Motorcycle</td>
+                    <td>11:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-20</td>
+                    <td>Test1</td>
+                    <td>regie0564@gmail.com</td>
+                    <td>CVT cleaning</td>
+                    <td>scooter</td>
+                    <td>15:00</td>
+                    <td>Pending</td>
+                    <td>Walk-in</td>
+                  </tr><tr>
+                    <td>2025-05-20</td>
+                    <td>Ben Barlow</td>
+                    <td>benbarlow@gmail.com</td>
+                    <td>Change oil</td>
+                    <td>Motorcycle</td>
+                    <td>12:00</td>
+                    <td>Pending</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-15</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>engine refresh</td>
+                    <td>scooter</td>
+                    <td>18:01</td>
+                    <td>Confirmed</td>
+                    <td>Online</td>
+                  </tr><tr>
+                    <td>2025-05-08</td>
+                    <td>Regie</td>
+                    <td>rdollesin21@gmail.com</td>
+                    <td>CVT cleaning</td>
+                    <td>scooter</td>
+                    <td>10:00</td>
+                    <td>Confirmed</td>
+                    <td>Online</td>
+                  </tr>    </tbody>
+                </table>
+              </div><div class="section">
+                <h2>Service Bookings Data</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Total Bookings</th>
+                            <th>Confirmed</th>
+                            <th>Completed</th>
+                            <th>Pending</th>
+                            <th>Declined</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr>
+                    <td>change oil</td>
+                    <td>7</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>4</td>
+                    <td>1</td>
+                  </tr><tr>
+                    <td>CVT cleaning</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                  </tr><tr>
+                    <td>Replace Shock</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>0</td>
+                  </tr><tr>
+                    <td>Adjust chain</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                  </tr><tr>
+                    <td>engine refresh</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                  </tr><tr>
+                    <td>Tune up</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                  </tr>    </tbody>
+                </table>
+              </div><script>
+            // Auto-print for PDF generation
+            window.onload = function() {
+                setTimeout(function() {
+                    window.print();
+                }, 1000);
+            };
+          </script>
+    </body>
+    </html> 

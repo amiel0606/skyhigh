@@ -1,6 +1,7 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.9",
-        "paymongo/paymongo-php": "^0.0.0"
+        "paymongo/paymongo-php": "^0.0.0",
+        "tecnickcom/tcpdf": "^6.10"
     }
 }
